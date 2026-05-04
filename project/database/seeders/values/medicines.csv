@@ -1,0 +1,11 @@
+id,name,dosage_form,medicine_class,description,created_at,updated_at
+1,Paracetamol 500mg,tablet,over_the_counter,Obat pereda demam dan nyeri,2026-04-01 08:00:00,2026-04-01 08:00:00
+2,Amoxicillin 500mg,capsules,prescription,Antibiotik untuk infeksi bakteri,2026-04-01 09:00:00,2026-04-01 09:00:00
+3,Cetirizine 10mg,tablet,limited_otc,Antihistamin untuk alergi,2026-04-02 10:00:00,2026-04-02 10:00:00
+4,Ibuprofen 400mg,tablet,over_the_counter,Antiinflamasi untuk nyeri,2026-04-02 11:00:00,2026-04-02 11:00:00
+5,Cough Syrup OBH,syrup,over_the_counter,Sirup obat batuk,2026-04-03 08:30:00,2026-04-03 08:30:00
+6,Insulin Glargine,injection,prescription,Insulin untuk diabetes,2026-04-03 09:30:00,2026-04-03 09:30:00
+7,Betamethasone Cream,ointment,prescription,Kortikosteroid topikal,2026-04-04 10:00:00,2026-04-04 10:00:00
+8,Omeprazole 20mg,capsules,limited_otc,Penghambat asam lambung,2026-04-04 11:00:00,2026-04-04 11:00:00
+9,Morphine Sulfate,injection,narcotic,Analgesik opioid,2026-04-05 08:00:00,2026-04-05 08:00:00
+10,Diazepam 5mg,tablet,psychotropic,Benzodiazepine,2026-04-05 09:00:00,2026-04-05 09:00:00

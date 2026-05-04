@@ -1,5 +1,4 @@
 username,password,email,phone_number,role,status
-username,password,email,phone_number,role,status
 jdoe01,Pass123!,jdoe01@mail.com,081234567801,member,active
 amelia.k,SafePwd9!,amelia.k@mail.com,081234567802,doctor,active
 budi_s,HelloPwd1!,budi_s@mail.com,081234567803,facility_admin,active

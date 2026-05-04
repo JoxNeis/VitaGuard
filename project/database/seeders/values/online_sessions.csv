@@ -1,0 +1,11 @@
+id,doctor_username,start_time,end_time,consultation_fee,description
+1,doc001,2025-04-10 09:00:00,2025-04-10 12:00:00,150000.00,Konsultasi online umum
+2,doc002,2025-04-10 13:00:00,2025-04-10 15:00:00,175000.00,Konsultasi kesehatan ringan
+3,doc003,2025-04-11 08:00:00,2025-04-11 10:00:00,200000.00,Konsultasi gigi online
+4,doc004,2025-04-11 10:30:00,2025-04-11 12:00:00,160000.00,Konsultasi medis umum
+5,doc005,2025-04-12 14:00:00,2025-04-12 16:00:00,180000.00,Konsultasi keluhan harian
+6,doc006,2025-04-12 16:30:00,2025-04-12 18:00:00,170000.00,Konsultasi kesehatan keluarga
+7,doc007,2025-04-13 09:00:00,2025-04-13 11:00:00,155000.00,Konsultasi ringan
+8,doc008,2025-04-13 11:30:00,2025-04-13 13:00:00,165000.00,Konsultasi umum
+9,doc009,2025-04-14 08:00:00,2025-04-14 10:00:00,190000.00,Konsultasi spesialis
+10,doc010,2025-04-14 10:30:00,2025-04-14 12:00:00,175000.00,Konsultasi lanjutan

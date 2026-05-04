@@ -16,7 +16,7 @@ class UserSeeder extends VitaGuardSeeder
     public function run(): void
     {
         $this->tableName = 'users';
-        $this->runVitaGuardSeeder('values/users.csv');
+        $this->runVitaGuardSeeder('users.csv');
     }
 
     protected function modifyData($dataArray): array

@@ -18,5 +18,32 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+        $this->call([
+            ProvinceSeeder::class,
+            CitySeeder::class,
+            DistrictSeeder::class,
+            ArticleTopicSeeder::class,
+            UserSeeder::class,
+            ArticleSeeder::class,
+            MemberSeeder::class,
+            MedicalHistorySeeder::class,
+            AllergenSeeder::class,
+            MemberAllergiesSeeder::class,
+            MemberMedicalProfileSeeder::class,
+            DoctorSeeder::class,
+            SpecialtiesSeeder::class,
+            DoctorSpecialtiesSeeder::class,
+            FacilitySeeder::class,
+            FacilityHoursSeeder::class,
+            ScheduleSeeder::class,
+            FacilityAdminSeeder::class,
+            AppointmentSeeder::class,
+            MedicineSeeder::class,
+            OnlineSessionSeeder::class,
+            ConsultationSeeder::class,
+            ChatSeeder::class,
+            PrescriptionSeeder::class,            
+            PrescriptionDetailSeeder::class,
+        ]);
     }
 }

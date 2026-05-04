@@ -15,7 +15,7 @@ class CitySeeder extends VitaGuardSeeder
     public function run(): void
     {
         $this->tableName = 'cities';
-        $this->runVitaGuardSeeder('values/cities.csv');
+        $this->runVitaGuardSeeder('cities.csv');
     }
 
 }

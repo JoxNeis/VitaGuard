@@ -1,0 +1,10 @@
+id,doctor_username,member_username,consultation_id,notes
+1,doc001,jdoe01,1,Minum obat setelah makan
+2,doc002,charlie77,2,Konsumsi obat batuk 2x sehari
+3,doc003,eko_prat,3,Hindari makanan keras sementara
+4,doc004,gilang23,4,Istirahat cukup dan minum air
+5,doc005,julian88,5,Konsumsi obat pereda nyeri
+6,doc006,maya_n,6,Minum vitamin dan cukup istirahat
+7,doc007,nathan_r,7,Lakukan peregangan ringan
+8,doc008,qori_a,8,Konsumsi obat flu sesuai aturan
+9,doc009,sinta_y,9,Minum obat radang tenggorokan

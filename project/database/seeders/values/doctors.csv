@@ -1,0 +1,16 @@
+username,prefix_name,first_name,middle_name,last_name,suffix_name,date_of_birth,address,district_id,rating_avg,rating_count,created_at,updated_at
+doc001,dr.,Andi,,Saputra,,1980-05-12,Jl. Merdeka No. 10,1,4.50,120,2025-01-01 08:00:00,2025-01-01 08:00:00
+doc002,dr.,Budi,Setiawan,Pratama,,1978-09-23,Jl. Sudirman No. 22,2,4.20,98,2025-01-02 09:15:00,2025-01-02 09:15:00
+doc003,drg.,Citra,,Lestari,,1985-03-17,Jl. Diponegoro No. 5,3,4.80,200,2025-01-03 10:30:00,2025-01-03 10:30:00
+doc004,dr.,Dewi,Kartika,Sari,,1990-11-05,Jl. Ahmad Yani No. 8,1,4.60,150,2025-01-04 11:45:00,2025-01-04 11:45:00
+doc005,dr.,Eko,,Prasetyo,,1982-07-19,Jl. Gajah Mada No. 14,2,4.10,75,2025-01-05 12:00:00,2025-01-05 12:00:00
+doc006,dr.,Fajar,Rizki,Nugroho,,1987-01-25,Jl. Kenjeran No. 3,3,4.75,180,2025-01-06 13:20:00,2025-01-06 13:20:00
+doc007,dr.,Gita,,Permata,,1992-06-10,Jl. Dharmawangsa No. 9,4,4.30,90,2025-01-07 14:10:00,2025-01-07 14:10:00
+doc008,dr.,Hendra,,Wijaya,,1975-12-02,Jl. Basuki Rahmat No. 18,5,4.00,60,2025-01-08 15:25:00,2025-01-08 15:25:00
+doc009,dr.,Indah,,Kusuma,,1988-08-14,Jl. Veteran No. 7,1,4.65,140,2025-01-09 16:40:00,2025-01-09 16:40:00
+doc010,dr.,Joko,,Santoso,,1983-04-28,Jl. Pahlawan No. 11,2,4.55,110,2025-01-10 17:55:00,2025-01-10 17:55:00
+doc011,dr.,Kevin,,Hartono,,1991-02-15,Jl. Ngagel No. 21,3,4.40,85,2025-01-11 08:00:00,2025-01-11 08:00:00
+doc012,dr.,Lina,,Wijayanti,,1986-09-09,Jl. Mayjen No. 4,4,4.70,160,2025-01-12 09:00:00,2025-01-12 09:00:00
+doc013,dr.,Mega,,Putri,,1993-07-01,Jl. Arif Rahman No. 2,5,4.25,95,2025-01-13 10:00:00,2025-01-13 10:00:00
+doc014,dr.,Nanda,,Saputri,,1989-03-22,Jl. Kusuma No. 6,1,4.35,88,2025-01-14 11:00:00,2025-01-14 11:00:00
+doc015,dr.,Oki,,Prabowo,,1984-11-30,Jl. Bratang No. 12,2,4.60,130,2025-01-15 12:00:00,2025-01-15 12:00:00

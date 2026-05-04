@@ -1,0 +1,21 @@
+id,member_username,allergen_id,inputted_by,severity,notes,created_at,updated_at
+1,jdoe01,5,amelia.k,mild,"Sakit perut setelah minum",2026-04-06 23:00:00,2026-04-06 23:00:00
+2,charlie77,8,budi_s,moderate,"Bersin dan mata berair",2026-04-06 23:00:00,2026-04-06 23:00:00
+3,eko_prat,1,diana.m,severe,"Riwayat anafilaksis",2026-04-06 23:00:00,2026-04-06 23:00:00
+4,gilang23,4,farah.z,mild,"Gatal di area mulut",2026-04-06 23:00:00,2026-04-06 23:00:00
+5,julian88,9,hanna_l,moderate,,2026-04-06 23:00:00,2026-04-06 23:00:00
+6,maya_n,6,ivan_x,severe,"Harus bawa EpiPen",2026-04-06 23:00:00,2026-04-06 23:00:00
+7,nathan_r,10,karen.t,mild,,2026-04-06 23:00:00,2026-04-06 23:00:00
+8,qori_a,2,leo_m,moderate,"Ruam merah merata",2026-04-06 23:00:00,2026-04-06 23:00:00
+9,sinta_y,12,olivia.p,mild,"Urtikaria ringan",2026-04-06 23:00:00,2026-04-06 23:00:00
+10,jdoe01,3,putra_w,moderate,"Kontak langsung menyebabkan ruam",2026-04-06 23:00:00,2026-04-06 23:00:00
+11,charlie77,11,reza_h,severe,"Bengkak parah pada area gigitan",2026-04-06 23:00:00,2026-04-06 23:00:00
+12,eko_prat,7,amelia.k,mild,,2026-04-06 23:00:00,2026-04-06 23:00:00
+13,gilang23,8,diana.m,moderate,"Batuk dan asma kumat",2026-04-06 23:00:00,2026-04-06 23:00:00
+14,julian88,5,karen.t,mild,"Hanya intoleransi ringan",2026-04-06 23:00:00,2026-04-06 23:00:00
+15,maya_n,1,olivia.p,severe,"Larangan keras pemberian Penisilin",2026-04-06 23:00:00,2026-04-06 23:00:00
+16,nathan_r,6,amelia.k,moderate,,2026-04-06 23:00:00,2026-04-06 23:00:00
+17,qori_a,4,diana.m,severe,"Reaksi cepat dalam 10 menit",2026-04-06 23:00:00,2026-04-06 23:00:00
+18,sinta_y,8,karen.t,mild,"Alergi debu biasa",2026-04-06 23:00:00,2026-04-06 23:00:00
+19,jdoe01,9,olivia.p,moderate,"Mata bengkak jika dekat kucing",2026-04-06 23:00:00,2026-04-06 23:00:00
+20,charlie77,10,amelia.k,mild,,2026-04-06 23:00:00,2026-04-06 23:00:00

@@ -45,7 +45,8 @@ class VitaGuardSeeder extends Seeder
      */
     protected function openCSV(string $filePath)
     {
-        $fullPath = storage_path($filePath);
+        // $fullPath = storage_path($filePath);
+        $fullPath = database_path('seeders/values/'.$filePath);
 
         if (!file_exists($fullPath)) {
             throw new Exception(
@@ -132,6 +133,19 @@ class VitaGuardSeeder extends Seeder
      */
     protected function modifyData($dataArray): array
     {
+        $timeFields = [
+            'open_time',
+            'close_time',
+            'break_start_time',
+            'break_end_time'
+        ];
+
+        foreach ($timeFields as $field) {
+            if (isset($dataArray[$field]) && trim($dataArray[$field]) === '') {
+                $dataArray[$field] = null;
+            }
+        }
+
         return $dataArray;
     }
 

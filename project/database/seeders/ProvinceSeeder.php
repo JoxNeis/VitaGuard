@@ -16,6 +16,6 @@ class ProvinceSeeder extends VitaGuardSeeder
     public function run(): void
     {
         $this->tableName = 'provinces';
-        $this->runVitaGuardSeeder('values/provinces.csv');
+        $this->runVitaGuardSeeder('provinces.csv');
     }
 }

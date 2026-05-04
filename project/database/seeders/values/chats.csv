@@ -1,0 +1,19 @@
+id,consultation_id,message,sender
+1,1,Selamat pagi dok saya merasa pusing sejak kemarin,jdoe01
+2,1,Baik apakah pusingnya disertai mual atau demam,amelia.k
+3,2,Halo saya batuk sejak tiga hari lalu,charlie77
+4,2,Apakah batuknya berdahak dan ada demam,diana.m
+5,3,Dok gigi saya terasa sakit saat mengunyah,eko_prat
+6,3,Baik kemungkinan ada peradangan gigi atau gusi,karen.t
+7,4,Saya demam ringan sejak tadi pagi,gilang23
+8,4,Apakah ada gejala lain seperti batuk atau pilek,olivia.p
+9,5,Saya sakit kepala dan badan terasa lemas,julian88
+10,5,Sudah berapa lama keluhan ini dirasakan,amelia.k
+11,6,Saya flu ringan dan hidung tersumbat,maya_n
+12,6,Baik saya sarankan istirahat cukup dan banyak minum,diana.m
+13,7,Saya merasa nyeri otot setelah aktivitas berat,nathan_r
+14,7,Apakah nyerinya hanya di satu bagian atau seluruh tubuh,hanna_l
+15,8,Saya batuk pilek dan tenggorokan agak sakit,qori_a
+16,8,Apakah ada demam atau sesak napas,karen.t
+17,9,Saya merasa sakit tenggorokan saat menelan,sinta_y
+18,9,Baik nanti saya bantu dengan saran obat yang sesuai,olivia.p

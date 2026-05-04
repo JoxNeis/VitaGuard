@@ -1,0 +1,11 @@
+id,name,address,district_id,phone,rating_avg,rating_count,created_at,updated_at
+1,Rumah Sakit Sehat Selalu,Jl. Kesehatan No. 1,1,0311234567,4.50,300,2025-01-01 08:00:00,2025-01-01 08:00:00
+2,Klinik Medika Utama,Jl. Medika No. 22,2,0319876543,4.20,150,2025-01-02 09:00:00,2025-01-02 09:00:00
+3,Puskesmas Gubeng,Jl. Raya Gubeng No. 10,3,0314567890,4.00,90,2025-01-03 10:00:00,2025-01-03 10:00:00
+4,Rumah Sakit Harapan,Jl. Harapan No. 5,4,0311112222,4.70,400,2025-01-04 08:00:00,2025-01-04 08:00:00
+5,Klinik Sejahtera,Jl. Sejahtera No. 8,5,0313334444,4.10,120,2025-01-05 09:00:00,2025-01-05 09:00:00
+6,Puskesmas Rungkut,Jl. Rungkut No. 2,4,0315556666,4.30,140,2025-01-06 07:30:00,2025-01-06 07:30:00
+7,Klinik Prima,Jl. Prima No. 6,3,0317778888,4.25,100,2025-01-07 09:00:00,2025-01-07 09:00:00
+8,Rumah Sakit Sentosa,Jl. Sentosa No. 3,2,0319990000,4.60,250,2025-01-08 08:00:00,2025-01-08 08:00:00
+9,Klinik Mitra,Jl. Mitra No. 11,1,0312223333,4.15,110,2025-01-09 09:00:00,2025-01-09 09:00:00
+10,Puskesmas Wonokromo,Jl. Wonokromo No. 7,5,0314445555,4.05,80,2025-01-10 07:30:00,2025-01-10 07:30:00

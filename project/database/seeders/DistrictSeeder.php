@@ -14,7 +14,7 @@ class DistrictSeeder extends VitaGuardSeeder
     public function run(): void
     {
         $this->tableName = 'districts';
-        $this->runVitaGuardSeeder('values/districts.csv');
+        $this->runVitaGuardSeeder('districts.csv');
     }
 
 }

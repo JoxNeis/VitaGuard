@@ -15,7 +15,7 @@ class ArticleTopicSeeder extends VitaGuardSeeder
     public function run(): void
     {
         $this->tableName = 'article_topics';
-        $this->runVitaGuardSeeder('values/article_topics.csv');
+        $this->runVitaGuardSeeder('article_topics.csv');
     }
 
 }
