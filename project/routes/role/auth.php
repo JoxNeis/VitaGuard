@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
@@ -7,6 +8,6 @@ Route::middleware('auth')->group(function () {
     #endregion
 
     #region VIEW ROUTES
-    Route::view("/home","home.index")->name('home');
+    Route::get("/home", [HomeController::class, 'index'])->name('home');
     #endregion
 });

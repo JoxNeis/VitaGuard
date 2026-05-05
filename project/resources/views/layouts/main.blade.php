@@ -53,23 +53,23 @@
 
 <body>
     <!-- Change navbar style class when scrolled -->
+    @if(Request::is('/', 'home'))
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const navbar = document.getElementById("navbar");
 
             window.addEventListener("scroll", function() {
                 if (window.scrollY > 10) {
-                    navbar.classList.add("scrolled");
+                    navbar.classList.add("scrolled", "navbar-light", "bg-white");
                     navbar.classList.remove("navbar-dark", "bg-transparent");
-                    navbar.classList.add("navbar-light", "bg-white");
                 } else {
-                    navbar.classList.remove("scrolled");
-                    navbar.classList.remove("navbar-light", "bg-white");
+                    navbar.classList.remove("scrolled", "navbar-light", "bg-white");
                     navbar.classList.add("navbar-dark", "bg-transparent");
                 }
             });
         });
     </script>
+    @endif
 
     @auth
     @if(Auth::user()->role == 'admin')

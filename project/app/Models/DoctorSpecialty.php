@@ -10,11 +10,11 @@ class DoctorSpecialty extends Model
     use HasFactory;
     public function doctor()
     {
-        return $this->belongsTo(Doctor::class, 'doctor_id');
+        return $this->belongsTo(Doctor::class, 'username', 'username');
     }
+
     public function specialties()
-    {
-        return $this->belongsTo(Specialties::class, 'specialties_id');
+    {        
+        return $this->belongsTo(Specialty::class, 'specialty_id', 'id');
     }
-    
 }
