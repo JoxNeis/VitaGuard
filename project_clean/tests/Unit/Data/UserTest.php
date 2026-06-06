@@ -90,26 +90,4 @@ class UserTest extends TestCase
             'status' => Status::ACTIVE->value
         ], $user->toArray());
     }
-
-    public function test_from_array_creates_user(): void
-    {
-        $user = TestUser::fromArray([
-            'username' => 'joshua',
-            'email' => 'joshua@example.com',
-            'phoneNumber' => '+6281234567890',
-            'role' => Role::MEMBER->value,
-            'status' => Status::ACTIVE->value
-        ]);
-
-        $this->assertInstanceOf(TestUser::class, $user);
-        $this->assertEquals('joshua', $user->getUsername());
-        $this->assertEquals('joshua@example.com', $user->getEmail());
-    }
-
-    public function test_from_illegal_array_creates_user(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('User is missing required field(s):');
-        $user = TestUser::fromArray([]);
-    }
 }

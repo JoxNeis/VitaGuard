@@ -22,8 +22,8 @@ return new class extends Migration
             $table->string('suffix_name', 100)->nullable();
             
             $table->date('date_of_birth');
+            
             $table->string('address', 255);
-                
             $table->unsignedBigInteger('district_id'); 
             $table->foreign('district_id')->references('id')->on('districts');
 

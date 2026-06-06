@@ -10,9 +10,9 @@ class Admin extends User
 
     #region CONSTRUCTOR
     public function __construct(
-        string $username = '',
-        string $email = '',
-        string $phoneNumber = '',
+        string $username,
+        string $email,
+        string $phoneNumber,
         Status $status = Status::ACTIVE
     ) {
         parent::__construct($username, $email, $phoneNumber, Role::ADMIN, $status);
@@ -25,14 +25,19 @@ class Admin extends User
         return parent::toArray();
     }
 
-    public static function fromArray(array $data): static
+    public static function fromArray(array $data): self
     {
-        $userInstance = parent::fromArray($data);
+        check_array_keys(
+            array_keys(get_class_vars(self::class)),
+            $data,
+            class_basename(self::class)
+        );
+
         return new self(
-            $userInstance->username,
-            $userInstance->email,
-            $userInstance->phoneNumber,
-            $userInstance->status
+            $data['username'],
+            $data['email'],
+            $data['phoneNumber'],
+            Status::from($data['status'])
         );
     }
     #endregion

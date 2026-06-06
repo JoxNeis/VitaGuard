@@ -129,34 +129,5 @@ abstract class User
             'status' => $this->status->value,
         ];
     }
-
-    public static function fromArray(array $data): static
-    {
-        $role = $data['role'] ?? null;
-
-        if ($role !== null) {
-            $roleEnum = Role::tryFrom($role);
-
-            if ($roleEnum && static::class === self::class) {
-                $childClass = $roleEnum->getClass();
-                return $childClass::fromArray($data);
-            }
-        }
-
-        check_array_keys(
-            array_keys(get_class_vars(self::class)),
-            $data,
-            class_basename(self::class)
-        );
-        
-        return new static(
-            $data['username'],
-            $data['email'],
-            $data['phoneNumber'],
-            Role::from($data['role']),
-            Status::from($data['status'])
-        );
-
-    }
     #endregion
 }
