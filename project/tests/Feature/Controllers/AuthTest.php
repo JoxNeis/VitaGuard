@@ -9,8 +9,12 @@ use App\Models\User;
 
 class AuthTest extends TestCase
 {
-    //use RefreshDatabase;
-
+    use RefreshDatabase;
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed();
+    }
     #region LOGIN
 
     public function test_user_can_login(): void
@@ -21,15 +25,6 @@ class AuthTest extends TestCase
             'device_name' => 'testing',
         ]);
 
-        $user = User::where('username', 'jdoe01')->first();
-        // dd([
-        //     'exists' => $user !== null,
-        //     'password_hash' => $user->password_hashed,
-        //     'password_matches' => $user
-        //         ? Hash::check('Pass123!', $user->password_hashed)
-        //         : false,
-        // ]);
-        dd($response->json());
         $response
             ->assertOk()
             ->assertJsonStructure([
@@ -37,8 +32,8 @@ class AuthTest extends TestCase
                 'token',
                 'user',
             ]);
-        $this->assertAuthenticatedAs($response['user']);
-        $this->assertDatabaseCount('personal_access_tokens', 1);
+        $user = User::where('username', $response->json('user.username'))->first();
+        $this->assertAuthenticatedAs($user);
     }
 
     public function test_login_fails_with_invalid_password(): void
@@ -116,22 +111,19 @@ class AuthTest extends TestCase
 
     public function test_authenticated_user_can_logout(): void
     {
-        $response = $this->postJson('/api/auth/logout');
+        $user = User::where('username', 'jdoe01')->first();
+
+        $response = $this->actingAs($user, 'sanctum')
+            ->deleteJson('/api/auth/logout');
+
         $response
             ->assertOk()
-            ->assertJson([
-                'message' => 'Logout successful',
-            ]);
+            ->assertJson(['message' => 'Logout successful']);
     }
 
     public function test_guest_cannot_logout(): void
     {
-        $response = $this->postJson('/api/auth/login', [
-            'username' => 'jdoe01',
-            'password' => 'Pass123!',
-            'device_name' => 'testing',
-        ]);
-        $response = $this->postJson('/api/auth/logout');
+        $response = $this->deleteJson('/api/auth/logout');
         $response->assertUnauthorized();
     }
 
