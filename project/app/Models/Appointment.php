@@ -14,10 +14,10 @@ class Appointment extends Model
     }
 
     public function schedule(){
-        return $this->belongsTo(Schedule::class, 'schedule_id', 'id');
+        return $this->belongsTo(DoctorSchedule::class, 'doctor_schedule_id', 'id');
     }
 
     public function doctor(){
-        return $this->schedule()->doctor();
+        return $this->schedule->belongsTo(Doctor::class,'doctor','username');
     }
 }

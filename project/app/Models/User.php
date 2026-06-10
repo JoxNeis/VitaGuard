@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,16 +10,22 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-
+    protected $primaryKey = 'username';
+    public $incrementing = false;
+    protected $keyType = 'string';
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
-        'password',
+        'password_hashed',
+        'phone_number',
+        'role',
+        'status',
+        'last_login_at'
     ];
 
     /**
@@ -29,7 +34,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'hashed_password',
+        'password_hashed',
         'remember_token',
     ];
 
@@ -41,4 +46,24 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function member()
+    {
+        return $this->hasOne(Member::class, 'username', 'username');
+    }
+
+    public function articles()
+    {
+        return $this->hasMany(Article::class, 'creator_username', 'username');
+    }
+
+    public function getAuthPasswordName()
+    {
+        return 'password_hashed';
+    }
+
+    public function getAuthPassword()
+    {
+        return $this->password_hashed;
+    }
 }
