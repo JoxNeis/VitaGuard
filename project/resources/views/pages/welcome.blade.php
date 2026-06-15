@@ -83,7 +83,6 @@
                         let articles = response.data;
                         let htmlContent = '';
 
-                        // Rakit kerangka HTML menggunakan data dari database
                         articles.forEach(function (article) {
                             htmlContent += `
                                 <div class="card mb-3 border-0 shadow-sm">

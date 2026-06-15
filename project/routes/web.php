@@ -30,6 +30,7 @@ Route::prefix('api/')->group(function () {
     });
 
     Route::middleware(['auth', 'can:' . Role::ADMIN->value])->prefix('admin')->group(function () {
+        Route::get('available-tables', [HomeController::class, 'getAvailableTables']); 
         Route::get('fetch-table/{tableName}', [HomeController::class, 'fetchAdminTable']);        
     });
 });

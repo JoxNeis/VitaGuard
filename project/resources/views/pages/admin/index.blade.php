@@ -7,10 +7,7 @@
                 <p>Pilih data yang ingin Anda kelola:</p>
 
                 <select id="table-selector" class="form-control w-25">
-                    <option value="" selected disabled>-- Pilih Tabel --</option>
-                    <option value="articles">Data Artikel</option>
-                    <option value="users">Data Pengguna</option>
-                    <option value="doctors">Data Dokter</option>
+                    <option value="" selected disabled>-- Memuat Pilihan Tabel... --</option>
                 </select>
             </div>
         </div>
@@ -24,9 +21,33 @@
         </div>
     </div>
 @endsection
+
 @section('scripts')
     <script>
-        $(document).ready(function () {            
+        $(document).ready(function () {
+                        
+            $.ajax({
+                url: '/api/admin/available-tables',
+                method: 'GET',
+                success: function (response) {
+                    if (response.success && response.data.length > 0) {
+                        let selector = $('#table-selector');
+                        
+                        // Bersihkan tulisan "Memuat..." dan ganti opsi default
+                        selector.empty();
+                        selector.append('<option value="" selected disabled>-- Pilih Tabel --</option>');
+                        
+                        // Suntikkan nama-nama tabel dari database ke dalam dropdown
+                        response.data.forEach(function(table) {
+                            selector.append(`<option value="${table.id}">${table.name}</option>`);
+                        });
+                    }
+                },
+                error: function () {
+                    $('#table-selector').html('<option value="" disabled>Gagal memuat opsi tabel</option>');
+                }
+            });
+            
             $('#table-selector').on('change', function () {
                 let selectedTable = $(this).val();
                 let container = $('#table-container');
@@ -39,7 +60,6 @@
                     success: function (response) {
                         if (response.success && response.data.length > 0) {
                             let rows = response.data;
-                            
                             let columns = Object.keys(rows[0]);
                             
                             let tableHtml = `
@@ -63,7 +83,6 @@
                             });
 
                             tableHtml += `</tbody></table></div>`;
-                            
                             container.html(tableHtml);
 
                         } else {
@@ -75,6 +94,7 @@
                     }
                 });
             });
+            
         });
     </script>
 @endsection

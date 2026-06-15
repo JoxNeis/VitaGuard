@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller; 
+use App\Http\Controllers\Controller;
+
+// for fetch list table instantly
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
 use Illuminate\Http\Request;
 use App\Models\Article;
 use App\Models\ArticleTopic;
@@ -52,23 +57,51 @@ class HomeController extends Controller
 
     public function fetchAdminTable($tableName)
     {
-        $data = match ($tableName) {
-            'articles' => Article::all(),
-            'users' => User::all(),
-            'doctors' => Doctor::all(),
-            default => null,
-        };
+        $hiddenTables = ['migrations', 'failed_jobs', 'password_reset_tokens', 'personal_access_tokens', 'sessions'];
 
-        if (!$data) {
+        if (in_array($tableName, $hiddenTables) || !Schema::hasTable($tableName)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data tabel tidak ditemukan atau belum diizinkan.'
+                'message' => 'Data tabel tidak ditemukan atau akses ditolak.'
             ], 404);
         }
+
+        // MAGIC: Ambil seluruh isi tabel HANYA dengan 1 baris kode ini!
+        $data = DB::table($tableName)->get();
 
         return response()->json([
             'success' => true,
             'data' => $data
+        ]);
+    }
+
+    public function getAvailableTables()
+    {
+        //get all table name di db
+        $tablesList = array_map('current', DB::select('SHOW TABLES'));
+
+        //blacklist table
+        $hiddenTables = [
+            'migrations',
+            'failed_jobs',
+            'password_reset_tokens',
+            'personal_access_tokens',
+            'sessions'
+        ];
+
+        $tables = [];
+        foreach ($tablesList as $tableName) {
+            if (!in_array($tableName, $hiddenTables)) {
+                $tables[] = [
+                    'id' => $tableName,
+                    'name' => 'Data ' . ucfirst($tableName)
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $tables
         ]);
     }
 }
