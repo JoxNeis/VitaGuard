@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class DoctorSpecialty extends Model
 {
     use HasFactory;
+
+    protected $guarded = []; 
+    public $timestamps = false;
     public function doctor()
     {
         return $this->belongsTo(Doctor::class, 'username', 'username');

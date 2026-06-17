@@ -11,15 +11,16 @@ class Doctor extends Model
     protected $primaryKey = 'username';
     public $incrementing = false;
     protected $keyType = 'string';
+    protected $guarded = []; 
 
     public function specialties()
     {
-        return $this->hasMany(DoctorSpecialty::class, 'username', 'username');
+        return $this->hasMany(DoctorSpecialty::class, 'doctor', 'username');
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'username', 'username');
     }
 
     public function district(){

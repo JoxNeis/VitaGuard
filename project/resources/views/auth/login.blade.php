@@ -15,7 +15,7 @@
                         <form id="login-form">
                             @csrf
                             <div class="form-group first">
-                                <label for="email">Email</label>
+                                <label for="username">Username</label>
                                 <input type="text" name="username" class="form-control" placeholder="Input your username"
                                     id="username" autofocus required>
 

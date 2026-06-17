@@ -65,8 +65,7 @@ class HomeController extends Controller
                 'message' => 'Data tabel tidak ditemukan atau akses ditolak.'
             ], 404);
         }
-
-        // MAGIC: Ambil seluruh isi tabel HANYA dengan 1 baris kode ini!
+       
         $data = DB::table($tableName)->get();
 
         return response()->json([
@@ -103,5 +102,5 @@ class HomeController extends Controller
             'success' => true,
             'data' => $tables
         ]);
-    }
+    }   
 }

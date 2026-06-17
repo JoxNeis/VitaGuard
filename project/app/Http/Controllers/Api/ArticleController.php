@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\APi;
 
-use App\Http\Controllers\Controller; 
+use App\Http\Controllers\Controller;
 use App\Models\Article;
+use App\Models\ArticleTopic;
 use Illuminate\Http\Request;
 
 class ArticleController extends Controller
@@ -68,20 +69,46 @@ class ArticleController extends Controller
         //
     }
 
-    public function getLatestArticles()
+    public function getLatestArticles(Request $request)
     {
-        try {
-            $articles = Article::latest()->take(5)->get();
+        $query = Article::query();
 
+        if ($request->has('topic')) {
+            $query->where('article_topic_id', $request->topic);
+        }
+
+        $articles = $query->latest()->take(10)->get();
+
+        if (count($articles) > 0) {
             return response()->json([
                 'success' => true,
                 'data' => $articles
             ]);
-        } catch (\Exception $e) {
+        } else {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
-            ], 500);
+                'data' => 'Data not found'
+            ]);
+        }
+    }
+
+    public function getArticleTopics()
+    {
+        $topics = ArticleTopic::withCount('articles')
+            ->orderBy('articles_count', 'desc')
+            ->take(5)
+            ->get();
+
+        if (count($topics) > 0) {
+            return response()->json([
+                'success' => true,
+                'data' => $topics,
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'data' => 'Data not found',
+            ]);
         }
     }
 }
