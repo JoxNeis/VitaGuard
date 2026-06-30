@@ -100,8 +100,20 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
-    Route::get('/member/consultations', function () {
+    Route::get('/home', function () {
+        return view('pages.home.index');
+    });
+
+    Route::get('/consultations', function () {
         return view('pages.consultations.member');
+    });
+
+    Route::get('/appointments', function () {
+        return view('pages.appointments.index');
+    });
+
+    Route::get('/doctors', function () {
+        return view('pages.doctors.index');
     });
 
     Route::get('/chat/{consultation}', function ($consultation) {
