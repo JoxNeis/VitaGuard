@@ -53,7 +53,7 @@
             let usernameToDelete = null;
 
             function loadDoctors() {
-                let container = $('#doctor-container');
+                let container = $('#doctor-container');d
 
                 $.ajax({
                     url: `/api/admin/doctors/fetch`,

@@ -1,14 +1,13 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
 use Illuminate\Http\Request;
 use App\Models\Chat;
 use App\Models\Consultation;
 use App\Http\Controllers\Controller;
 
 class ChatController extends Controller
-{
+{   
     /**
      * Display a listing of the resource.
      */

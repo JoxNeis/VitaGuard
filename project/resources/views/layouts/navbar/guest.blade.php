@@ -13,13 +13,13 @@
                 <a class="nav-link" href="/">Home</a>
             </li>
             <li class="nav-item {{ Request::is('consultations*') ? 'active' : '' }}">
-                <a class="nav-link" href="/consultations">Consultations</a>
+                <a class="nav-link" href="../consultations">Consultations</a>
             </li>
             <li class="nav-item {{ Request::is('appointments*') ? 'active' : '' }}">
-                <a class="nav-link" href="/appointments">Appointment</a>
+                <a class="nav-link" href="../appointments">Appointment</a>
             </li>
             <li class="nav-item {{ Request::is('doctors*') ? 'active' : '' }}">
-                <a class="nav-link" href="/doctors">Doctors</a>
+                <a class="nav-link" href="../doctors">Doctors</a>
             </li>
             <!-- <li class="nav-item {{ Request::is('history-consultations*') ? 'active' : '' }}">
                 <a class="nav-link" href="/history-consultations">History Consultations</a>

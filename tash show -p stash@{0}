@@ -1,0 +1,29 @@
+[1mdiff --git a/project/app/Http/Controllers/Api/ChatController.php b/project/app/Http/Controllers/Api/ChatController.php[m
+[1mindex d04f6d2..c5dd0ce 100644[m
+[1m--- a/project/app/Http/Controllers/Api/ChatController.php[m
+[1m+++ b/project/app/Http/Controllers/Api/ChatController.php[m
+[36m@@ -1,19 +1,18 @@[m
+ <?php[m
+ [m
+[31m-namespace App\Http\Controllers;[m
+[31m-[m
+[32m+[m[32mnamespace App\Http\Controllers\Api;[m
+[32m+[m[32muse App\Http\Controllers\Controller;[m
+ use Illuminate\Http\Request;[m
+ [m
+ class ChatController extends Controller[m
+[31m-{[m
+[32m+[m[32m{[m[41m   [m
+     /**[m
+      * Display a listing of the resource.[m
+      */[m
+[31m-    public function index()[m
+[32m+[m[32m    public function index($username)[m
+     {[m
+[31m-        return view('pages.chat.index');[m
+[32m+[m[32m        return view('pages.chat.index', compact('username'));[m
+     }[m
+[31m-[m
+     /**[m
+      * Show the form for creating a new resource.[m
+      */[m

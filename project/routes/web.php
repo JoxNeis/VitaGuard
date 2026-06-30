@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ArticleController;
+use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\DoctorController;
 use App\Http\Controllers\Api\ChatController;
@@ -33,6 +34,8 @@ Route::prefix('api/')->group(function () {
             Route::delete('logout', [AuthController::class, 'logout']);
         });
     });
+    Route::get('/consultations/doctors', [ConsultationController::class, 'fetchDoctors']
+);
 
     Route::middleware(['auth'])->group(function () {
         Route::get('articles/fetch', [ArticleController::class, 'fetchArticles']);
@@ -40,6 +43,8 @@ Route::prefix('api/')->group(function () {
         Route::get('articles/{article}/detail', [ArticleController::class, 'show']);
         Route::get('articles/{article}/edit-data', [ArticleController::class, 'edit'])->middleware('can:update,article');
         Route::get('consultations/fetch', [ConsultationController::class, 'fetchConsultations']);
+        Route::post('/consultations', [ConsultationController::class, 'store'])
+        ->name('consultation.store');
         Route::get('chat/{consultation}', [ChatController::class, 'fetchMessages']);
         
         // POST
@@ -75,9 +80,27 @@ Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
 
+Route::get('/register', function () {
+    return view('auth.register');
+})->name('register');
+
 Route::get('/doctors', function () {
     return view('pages.doctors.index');
 });
+
+
+Route::prefix('consultations')->group(function () {
+
+    // UI Booking
+    Route::get('/{specialty?}', [ConsultationController::class, 'index'])
+        ->name('consultation.index');
+    
+    // Proses booking 
+    Route::post('/', [ConsultationController::class, 'store'])
+        ->name('consultation.store')
+        ->middleware('auth');
+});
+
 
 Route::middleware(['auth'])->group(function () {
     //can be access from admin & doctor
@@ -107,6 +130,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/consultations', function () {
         return view('pages.consultations.member');
     });
+    
+
+    Route::get('/chat/{consultation}', [ChatController::class, 'show'])->name('chat.show');
 
     Route::get('/appointments', function () {
         return view('pages.appointments.index');
@@ -117,8 +143,10 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::get('/chat/{consultation}', function ($consultation) {
-        return view('pages.chat.index', ['consultationId' => $consultation]);
-    });
+    return view('pages.chat.index', [
+        'consultationId' => $consultation
+    ]);
+})->name('chat');
 
     Route::prefix('admin')->middleware('can:' . Role::ADMIN->value)->group(function () {
         Route::get('/home', function () {
@@ -154,4 +182,13 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 });
+
+Route::middleware(['auth', 'can:' . Role::MEMBER->value])->group(function () {
+
+    Route::get('/member/consultations', function () {
+        return view('pages.consultations.member');
+    })->name('consultations.member');
+
+});
+
 #endregion
