@@ -4,15 +4,15 @@
 <div class="container" style="margin-top: 64px; margin-bottom: 36px;">
     <div class="row text-center">
         <div class="col-12">
-            <h2 class="font-weight-bold">Chat doctor in VitaGuard</h2>
+            <h2 class="font-weight-bold">Booking Appointment with Doctors in VitaGuard</h2>
             <p class="text-muted">Our top doctors are always ready to help you</p>
         </div>
     </div>
     <div class="row mb-3">
         <div class="col-12 d-flex justify-content-center">
             @auth
-                <a href="{{ route('consultations.member') }}" class="btn btn-outline-primary px-4 py-2">
-                    <i class="bi bi-clipboard2-heart me-1"></i> Konsultasi Saya
+                <a href="{{ route('appointments.member') }}" class="btn btn-outline-primary px-4 py-2">
+                    <i class="bi bi-clipboard2-heart me-1"></i> Appointment Saya
                 </a>
             @endauth
         </div>
@@ -27,7 +27,6 @@
                 </ol>
 
                 <div class="carousel-inner rounded-lg" style="border-radius: 15px; overflow: hidden;">
-
                     <div class="carousel-item active">
                         <picture>
                             <source srcset="/assets/images/hero-bg.webp" type="image/webp">
@@ -38,7 +37,6 @@
                             <p>Get the best medical advice from your home.</p>
                         </div>
                     </div>
-
                     <div class="carousel-item">
                         <picture>
                             <source srcset="/assets/images/hero-bg.webp" type="image/webp">
@@ -49,7 +47,6 @@
                             <p>Our doctors are available around the clock.</p>
                         </div>
                     </div>
-
                     <div class="carousel-item">
                         <picture>
                             <source srcset="/assets/images/doctor.webp" type="image/webp">
@@ -60,7 +57,6 @@
                             <p>Certified and experienced healthcare providers.</p>
                         </div>
                     </div>
-
                 </div>
 
                 <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -83,8 +79,7 @@
         <div class="col-12 mt-3">
             <ul class="nav nav-pills justify-content-center" id="specialty-pills" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link {{ request('specialty') ? '' : 'active' }}"
-                    href="/consultations">
+                    <a class="nav-link {{ request('specialty') ? '' : 'active' }}" href="/appointments">
                         All Specialties
                     </a>
                 </li>
@@ -96,13 +91,12 @@
                     </a>
                 </li>
                 @endforeach
-                
             </ul>
         </div>
     </div>
+
     @php
     $selected = request('specialty');
-
     $filteredDoctors = $selected
         ? $doctors->filter(function ($doctor) use ($selected) {
             return $doctor->specialties->contains(function ($ds) use ($selected) {
@@ -110,9 +104,9 @@
             });
         })
         : $doctors;
-@endphp
-    @foreach($filteredDoctors as $doctor)
+    @endphp
 
+    @foreach($filteredDoctors as $doctor)
     @php
     $fullName = trim($doctor->prefix_name . ' ' . $doctor->first_name . ' ' . $doctor->middle_name . ' ' . $doctor->last_name);
     $fullNameWithTitle = $fullName . ($doctor->suffix_name ? ', ' . $doctor->suffix_name : '');
@@ -123,25 +117,23 @@
                 <div class="col-md-2 text-center mb-3 mb-md-0 d-flex justify-content-center align-items-center">
                     <img src="https://ui-avatars.com/api/?&background=f0f0f0&color=333&size=120"
                         class="rounded-circle img-fluid"
-                        alt="FOto Doctor"
+                        alt="Foto Doctor"
                         style="width: 110px; height: 110px; object-fit: cover; border: 4px solid #f8f9fa;">
                 </div>
 
                 <div class="col-md-7">
-                    <h4 class="font-weig    ht-bold mb-2 text-dark">{{$fullName}}</h4>
-
+                    <h4 class="font-weight-bold mb-2 text-dark">{{$fullName}}</h4>
                     <div class="text-muted mb-2" style="font-size: 0.95rem;">
                         <i class="fas fa-stethoscope fa-fw text-secondary"></i>
-                            @if($doctor->specialties->count() > 0)
-                                @for($i = 0; $i < $doctor->specialties->count(); $i++)
-                                    {{ $doctor->specialties[$i]->specialty?->name }}
-                                    @if($i < $doctor->specialties->count() - 1), @endif
-                                @endfor
-                            @else
-                                General Practitioner
-                            @endif
+                        @if($doctor->specialties->count() > 0)
+                            @for($i = 0; $i < $doctor->specialties->count(); $i++)
+                                {{ $doctor->specialties[$i]->specialty?->name }}
+                                @if($i < $doctor->specialties->count() - 1), @endif
+                            @endfor
+                        @else
+                            General Practitioner
+                        @endif
                     </div>
-
                     <div class="text-muted mb-3" style="font-size: 0.95rem;">
                         <i class="far fa-building fa-fw text-secondary"></i>{{ $doctor->address }}
                     </div>
@@ -158,93 +150,126 @@
                             <span class="text-muted" style="font-size: 0.85rem;">({{ $doctor->rating_count }} reviews)</span>
                         </div>
                     </div>
-                    <div class="text-md-right">
-                        @auth
-                            <a href="{{ route('chat', $doctor->consultation_id ?? 'new') }}"
-                                class="btn btn-block text-white font-weight-bold py-2 shadow-sm"
-                                style="background-color: #ea580c; border-radius: 8px;">
-                                    Chat
-                                </a>
-                    @endauth
-
-                        @guest
-                        <button type="button"
-                            class="btn btn-block text-white font-weight-bold py-2 shadow-sm"
-                            style="background-color: #ea580c; border-radius: 8px;"
-                            data-toggle="modal" data-target="#loginModal">
-                            Chat
-                        </button>
-                        @endguest
-
-                    </div>
+                    <!-- TOMBOL CHAT DIHAPUS -->
                 </div>
+            </div>
+            <hr class="my-3 border-light">
 
+            <div class="row align-items-center mt-3">
+                <div class="col-md-12">
+                    <div class="text-muted mb-2" style="font-size: 0.95rem;">
+                        <i class="far fa-calendar-alt fa-fw mr-2"></i>
+                        <strong>Pilih Jadwal Konsultasi</strong>
+                    </div>
+
+                    @if($doctor->schedules->count() > 0)
+                        <form class="booking-form" action="{{ route('appointments.store') }}" method="POST" data-doctor-id="{{ $doctor->id }}">
+                            @csrf
+                            <input type="hidden" name="doctor_id" value="{{ $doctor->username }}">
+                            
+                            <div class="form-group">
+                                <label class="font-weight-bold text-secondary mb-2">Pilih Jam & Hari Tersedia:</label>
+                                <div class="list-group">
+                                    @foreach($doctor->schedules as $schedule)
+                                    <label class="list-group-item d-flex justify-content-between align-items-center mb-2 style-schedule-item"
+                                        style="
+                                            cursor: {{ $schedule->is_booked_by_user ? 'not-allowed' : 'pointer' }};
+                                            border-radius:6px;
+                                            {{ $schedule->is_booked_by_user ? 'background:#f3f4f6;' : '' }}
+                                        ">
+                                        <div class="d-flex align-items-center">
+                                            <input type="radio" name="schedule_id" value="{{ $schedule->id }}" required {{ $schedule->is_booked_by_user ? 'disabled' : '' }}>
+                                            <span class="ml-3 font-weight-bold {{ $schedule->is_booked_by_user ? 'text-muted' : 'text-dark' }}">
+                                                {{ \Carbon\Carbon::parse($schedule->open_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($schedule->close_time)->format('H:i') }} WIB
+                                            </span>
+                                            <span class="badge badge-light ml-3">{{ $schedule->day_of_week }}</span>
+                                        </div>
+                                        @if($schedule->is_booked_by_user)
+                                            <span class="badge badge-secondary">You Have Booked This</span>
+                                        @else
+                                            <span class="badge badge-info">Available</span>
+                                        @endif
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="form-group mt-3">
+                                <label class="font-weight-bold text-secondary">Tanggal Konsultasi</label>
+                                <input type="date" name="date" class="form-control" min="{{ date('Y-m-d') }}" required>
+                            </div>
+
+                            <div class="form-group mt-4">
+                                <label for="notes-{{ $doctor->id }}" class="font-weight-bold text-secondary">Catatan Keluhan / Keperluan:</label>
+                                <textarea name="notes" id="notes-{{ $doctor->id }}" class="form-control" rows="3" maxlength="255"></textarea>
+                                <small class="form-text text-muted">Informasikan keluhan singkat Anda agar dokter dapat mempersiapkan pemeriksaan dengan lebih baik.</small>
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-block mt-4 font-weight-bold btn-submit-booking py-2" style="background-color: #22c55e; border: none; font-size: 1.05rem; border-radius: 6px; box-shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.2);">
+                                Konfirmasi & Pilih Jadwal
+                            </button>
+                        </form>
+                    @else
+                        <p class="text-muted italic">Tidak ada jadwal tersedia untuk dokter ini.</p>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
     @endforeach
 </div>
 
-
-@push('modal')
-<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);">
-            <div class="modal-header border-bottom-0 pb-0">
-                <h5 class="modal-title font-weight-bold" id="loginModalLabel">Login to access chat</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form method="POST" action="{{route('login')}}">
-                @csrf
-                <div class="modal-body px-4 pt-3 pb-2">
-
-                    <div class="form-group mb-3">
-                        <label for="username" class="font-weight-bold text-muted" style="font-size: 0.9rem;">Username</label>                        
-                        <input type="text" name="username" class="form-control @error('username') is-invalid @enderror" placeholder="Input your username" id="username" autofocus required>
-                        @error('username')
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group mb-4">
-                        <label for="password" class="font-weight-bold text-muted" style="font-size: 0.9rem;">Password</label>
-                        <input type="password" name="password" class="form-control" placeholder="Input your password" id="password" required>
-                    </div>
-
-                </div>                
-                <div class="modal-footer border-top-0 flex-column px-4 pb-4 pt-0">
-                    <button type="submit" class="btn btn-block btn-primary text-white font-weight-bold py-2 shadow-sm">
-                        Log In
-                    </button>
-                    
-                    <p class="text-center mt-3 mb-0" style="font-size: 0.95rem;">
-                        Don't have any account?
-                        <a href="/register" class="font-weight-bold text-decoration-none">Register</a>
-                    </p>
-                </div>
-            </form>
-
-        </div>
-    </div>
-</div>
-@endpush
 <style>
     @media (min-width: 768px) {
         .custom-border-left {
             border-left: 1px solid #e5e7eb;
         }
     }
-
-    .btn[style*="background-color: #ea580c"]:hover {
-        background-color: #c2410c !important;
-    }
 </style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.booking-form').on('submit', function(e) {
+        e.preventDefault(); 
 
+        let form = $(this);
+        let submitBtn = form.find('.btn-submit-booking');
+        let actionUrl = form.attr('action');
+        let formData = form.serialize(); 
+
+        submitBtn.prop('disabled', true).text('Processing Booking...');
+
+        $.ajax({
+            url: actionUrl,
+            type: 'POST',
+            data: formData, 
+            dataType: 'json',
+            headers: {
+                'Accept': 'application/json' 
+            },
+            success: function(response) {
+                if(response.success) {
+                    alert('Sukses! ' + response.message + '\nNomor Antrean Anda: ' + response.queue_order);
+                    window.location.reload(); 
+                }
+            },
+            error: function(xhr) {
+                submitBtn.prop('disabled', false).text('Konfirmasi & Pilih Jadwal');
+
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    let errorMessage = '';
+                    $.each(errors, function(key, value) {
+                        errorMessage += value[0] + '\n';
+                    });
+                    alert('Gagal Validasi:\n' + errorMessage);
+                } else {
+                    alert('Error ' + xhr.status + ': ' + (xhr.responseJSON.message || 'Terjadi kesalahan pada server.'));
+                }
+            }
+        });
+    });
+});
+</script>
 @endsection
