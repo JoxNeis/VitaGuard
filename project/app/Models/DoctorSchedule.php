@@ -9,8 +9,9 @@ class DoctorSchedule extends Model
 {
     use HasFactory;
 
-    public function doctor(){
-        return $this->belongsTo(Doctor::class,'doctor','username');
+    public function doctorData() 
+    {
+        return $this->belongsTo(Doctor::class, 'doctor', 'username');
     }
 
     public function appointments()

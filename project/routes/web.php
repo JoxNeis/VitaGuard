@@ -45,14 +45,17 @@ Route::prefix('api/')->group(function () {
         Route::get('consultations/fetch', [ConsultationController::class, 'fetchConsultations']);
         Route::post('/consultations', [ConsultationController::class, 'store'])
         ->name('consultation.store');
-        Route::get('chat/{consultation}', [ChatController::class, 'fetchMessages']);
-        
+        Route::get('chat/{consultation}', [ChatController::class, 'fetchMessages']);   
+        Route::put('/appointments/{id}/status', [AppointmentController::class, 'updateStatus']); 
+        Route::middleware(['auth'])->group(function () {
+});
         // POST
         Route::post('articles/store', [ArticleController::class, 'store']);
         Route::post('articles/{article}/update', [ArticleController::class, 'update'])->middleware('can:update,article');
         Route::post('articles/{article}/destroy', [ArticleController::class, 'destroy'])->middleware('can:delete,article');
         Route::post('chat/send', [ChatController::class, 'store']);
         Route::post('chat/{consultation}/close', [ChatController::class, 'close']);
+
     });
 
     Route::middleware(['auth', 'can:' . Role::ADMIN->value])->prefix('admin')->group(function () {
@@ -84,10 +87,22 @@ Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
 
-Route::get('/doctors', function () {
-    return view('pages.doctors.index');
-});
+Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors.index');
 
+
+Route::get('/appointments', [AppointmentController::class, 'index'])
+    ->name('appointments.index');
+    
+
+Route::post('/appointments', [AppointmentController::class, 'store'])
+    ->name('appointments.store')
+    ->middleware('auth');
+
+Route::get('/api/appointments/fetch', [AppointmentController::class, 'fetchAppointments'])
+    ->middleware('auth');
+
+Route::get('/api/doctor/appointments/fetch', 
+            [AppointmentController::class, 'fetchDoctorAppointments'])->middleware('auth');;
 
 Route::prefix('consultations')->group(function () {
 
@@ -134,14 +149,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/chat/{consultation}', [ChatController::class, 'show'])->name('chat.show');
 
-    Route::get('/appointments', function () {
-        return view('pages.appointments.index');
-    });
-
-    Route::get('/doctors', function () {
-        return view('pages.doctors.index');
-    });
-
     Route::get('/chat/{consultation}', function ($consultation) {
     return view('pages.chat.index', [
         'consultationId' => $consultation
@@ -175,12 +182,21 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('doctor')->middleware('can:' . Role::DOCTOR->value)->group(function () {
         Route::get('/', function () {
             return view('pages.doctors.index');
-        });
+        })->name('doctor.index');
 
         Route::get('/consultations', function () {
             return view('pages.consultations.doctor');
         });
+
     });
+});
+
+//appointments ROLE AND MEMBER
+Route::middleware(['auth', 'can:' . Role::DOCTOR->value])->group(function () {
+
+    Route::get('/appointments/doctor', [AppointmentController::class, 'doctor'])
+        ->name('appointments.doctor');
+
 });
 
 Route::middleware(['auth', 'can:' . Role::MEMBER->value])->group(function () {
@@ -189,6 +205,10 @@ Route::middleware(['auth', 'can:' . Role::MEMBER->value])->group(function () {
         return view('pages.consultations.member');
     })->name('consultations.member');
 
+    Route::get('/appointments/member', [AppointmentController::class, 'member'])
+    ->name('appointments.member')
+    ->middleware('auth');
 });
+
 
 #endregion
