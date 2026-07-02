@@ -1,127 +1,265 @@
 <?php
 
 // namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api;
 
-// use App\Models\Appointment;
-// use App\Models\Consultation;
-// use App\Models\Doctor;
-// use App\Models\DoctorSchedule;
-// use App\Models\Specialty;
-// use Illuminate\Http\Request;
-// use App\Http\Controllers\Controller;
-// use Illuminate\Support\Facades\Auth;
-// use Illuminate\Support\Facades\DB;
+use App\Models\Appointment;
+use App\Models\Doctor;
+use App\Models\DoctorSchedule;
+use App\Models\Specialty;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
-// class AppointmentController extends Controller
-// {
-//     public function index()
-//     {
-//         $doctors = Doctor::with(['specialties', 'schedules'])->get();
-//         $specialties = Specialty::all();
+class AppointmentController extends Controller
+{
 
-//         return view('pages.consultations.index', compact('doctors', 'specialties'));
-//     }
+    public function index()
+    {
+        $doctors = Doctor::all();
+        $currentPatient = Auth::check() ? Auth::user()->username : null;
 
-//     public function create()
-//     {
-//     }
+        $doctors = Doctor::with(['specialties', 'schedules' => function($query) use ($currentPatient) {
+            if ($currentPatient) {
+                $query->with(['appointments' => function($q) use ($currentPatient) {
+                    $q->where('patient', $currentPatient)->where('status', '!=', 'cancelled');
+                }]);
+            }
+        }])->get();
 
-//     public function store(Request $request)
-//     {
-//         if (!Auth::check()) {
-//             return response()->json([
-//                 'success' => false,
-//                 'message' => 'Anda harus login terlebih dahulu untuk melakukan booking.'
-//             ], 401);
-//         }
+        foreach ($doctors as $doctor) {
+            $hasBooked = false;
+            if ($currentPatient) {
+                $hasBooked = Appointment::where('patient', $currentPatient)
+                    ->whereHas('schedule', function ($q) use ($doctor) {
+                        $q->where('doctor', $doctor->username);
+                    })
+                    ->where('status', '!=', 'cancelled')
+                    ->exists();
+            }
+            $doctor->has_booked = $hasBooked;
+            foreach ($doctor->schedules as $schedule) {
+                $schedule->is_booked_by_user = $schedule->appointments->isNotEmpty();
+            }
+        }
 
-//         $request->validate([
-//             'doctor_id'   => 'required|exists:doctors,username',
-//             'schedule_id' => 'required|exists:doctor_schedules,id',
-//             'date'        => 'required|date|after_or_equal:today',
-//             'notes'       => 'nullable|string|max:255',
-//         ]);
+        $specialties = Specialty::all();
 
-//         $patientUsername = Auth::user()->username;
+        return view('pages.appointments.index', compact('doctors', 'specialties'));
+    }
+    public function member()
+    {
+        return view('pages.appointments.member');
+    }
 
-//         $existingAppointment = Appointment::where('patient', $patientUsername)
-//             ->where('doctor_schedule_id', $request->schedule_id)
-//             ->whereDate('date', $request->date)
-//             ->where('status', '!=', 'cancelled')
-//             ->first();
-
-//         if ($existingAppointment) {
-//             return response()->json([
-//                 'success' => false,
-//                 'message' => 'Anda sudah melakukan booking untuk jadwal dan tanggal ini.'
-//             ], 422);
-//         }
-
-//         DB::beginTransaction();
-//         try {
-//             $schedule = DoctorSchedule::findOrFail($request->schedule_id);
-
-//             $queueOrder = Appointment::where('doctor_schedule_id', $schedule->id)
-//                 ->whereDate('date', $request->date)
-//                 ->count() + 1;
-
-//             $appointment = Appointment::create([
-//                 'patient'            => $patientUsername,
-//                 'doctor_schedule_id' => $schedule->id,
-//                 'date'               => $request->date,
-//                 'time'               => $schedule->open_time,
-//                 'queue_order'        => $queueOrder,
-//                 'status'             => 'pending',
-//                 'notes'              => $request->notes,
-//             ]);
-
-//             $onlineSession = \App\Models\OnlineSession::create([
-//                 'doctor'           => $request->doctor_id,
-//                 'start_time'       => now(),
-//                 'end_time'         => null,
-//                 'consultation_fee' => 0,
-//                 'description'      => 'Appointment #' . $appointment->id,
-//             ]);
-
-//             Consultation::create([
-//                 'online_session_id' => $onlineSession->id,
-//                 'patient'           => $patientUsername,
-//                 'start_time'        => now(),
-//                 'end_time'          => null,
-//                 'notes'             => $request->notes,
-//                 'paid_at'           => null,
-//             ]);
-
-//             DB::commit();
-
-//             return response()->json([
-//                 'success'      => true,
-//                 'message'      => 'Booking jadwal konsultasi berhasil.',
-//                 'queue_order'  => $appointment->queue_order,
-//                 'appointment'  => $appointment,
-//             ]);
-//         } catch (\Exception $e) {
-//             DB::rollBack();
-//             return response()->json([
-//                 'success' => false,
-//                 'message' => 'Gagal menyimpan data booking: ' . $e->getMessage()
-//             ], 500);
-//         }
-//     }
+    public function doctor()
+    {
+        return view('pages.appointments.doctor');
+    }
 
 
-//     public function show(string $id)
-//     {
-//     }
+    public function create()
+    {
+    }
 
-//     public function edit(string $id)
-//     {
-//     }
+    public function fetchDoctorAppointments()
+    {
+        try {
+            $user = Auth::user();
+            if (!$user || $user->role != 'doctor') {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
 
-//     public function update(Request $request, string $id)
-//     {
-//     }
+            $appointments = Appointment::whereHas('schedule', function($q) use ($user) {
+                $q->where('doctor', $user->username);
+            })
+            ->with(['schedule', 'patient'])
+            ->orderBy('date', 'desc')
+            ->orderBy('time', 'desc')
+            ->get();
 
-//     public function destroy(string $id)
-//     {
-//     }
+            $data = $appointments->map(function ($appointment) {
+                $patient = $appointment->patient;
+                
+                if (is_string($patient)) {
+                    $member = \App\Models\Member::where('username', $patient)->first();
+                    $patientName = $member ? $member->first_name . ' ' . $member->last_name : $patient;
+                } else {
+                    $patientName = $patient ? $patient->first_name . ' ' . $patient->last_name : 'Pasien tidak ditemukan';
+                }
+
+                return [
+                    'id'            => $appointment->id,
+                    'patient_name'  => $patientName,
+                    'date'          => $appointment->date,
+                    'time'          => $appointment->time,
+                    'queue_order'   => $appointment->queue_order,
+                    'status'        => $appointment->status,
+                    'notes'         => $appointment->notes,
+                ];
+            });
+
+            return response()->json(['success' => true, 'data' => $data]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
+        }
+    }
+
+
+    public function updateStatus(Request $request, $id)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
+        }
+
+        $appointment = Appointment::findOrFail($id);
+
+        // Cek otorisasi: hanya dokter yang memiliki schedule appointment ini atau admin
+        if ($user->role == 'doctor') {
+            $schedule = $appointment->schedule;
+            if (!$schedule || $schedule->doctor != $user->username) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized to update this appointment'], 403);
+            }
+        } elseif ($user->role != 'admin') {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'status' => 'required|in:pending,confirmed,completed,cancelled,no_show'
+        ]);
+
+        $appointment->status = $request->status;
+        $appointment->save();
+
+        return response()->json(['success' => true, 'message' => 'Status updated']);
+    }
+
+    public function fetchAppointments()
+    {
+        try {
+            $user = Auth::user();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthenticated'
+                ], 401);
+            }
+
+            $appointments = Appointment::where('patient', $user->username)
+                ->with(['schedule.doctorData'])
+                ->orderBy('date', 'desc')
+                ->orderBy('time', 'desc')
+                ->get();
+
+            $data = $appointments->map(function ($appointment) {
+                $doctor = $appointment->schedule->doctorData ?? null;
+                
+                return [
+                    'id'            => $appointment->id,
+                    'doctor_name'   => $doctor ? "dr. {$doctor->first_name} {$doctor->last_name}" : 'Dokter tidak ditemukan',
+                    'date'          => $appointment->date,
+                    'time'          => $appointment->time,
+                    'queue_order'   => $appointment->queue_order,
+                    'status'        => $appointment->status,
+                    'notes'         => $appointment->notes,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data'    => $data
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    public function store(Request $request)
+    {
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda harus login terlebih dahulu untuk melakukan booking.'
+            ], 401);
+        }
+
+        $request->validate([
+            'doctor_id'   => 'required|exists:doctors,username',
+            'schedule_id' => 'required|exists:doctor_schedules,id',
+            'date'        => 'required|date|after_or_equal:today',
+            'notes'       => 'nullable|string|max:255',
+        ]);
+
+        $patientUsername = Auth::user()->username;
+
+        $existingAppointment = Appointment::where('patient', $patientUsername)
+            ->where('doctor_schedule_id', $request->schedule_id)
+            ->whereDate('date', $request->date)
+            ->where('status', '!=', 'cancelled')
+            ->first();
+
+        if ($existingAppointment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda sudah melakukan booking untuk jadwal dan tanggal ini.'
+            ], 422);
+        }
+
+        DB::beginTransaction();
+        try {
+            $schedule = DoctorSchedule::findOrFail($request->schedule_id);
+
+            $queueOrder = Appointment::where('doctor_schedule_id', $schedule->id)
+                ->whereDate('date', $request->date)
+                ->count() + 1;
+
+            $appointment = Appointment::create([
+                'patient'            => $patientUsername,
+                'doctor_schedule_id' => $schedule->id,
+                'date'               => $request->date,
+                'time'               => $schedule->open_time,
+                'queue_order'        => $queueOrder,
+                'status'             => 'pending',
+                'notes'              => $request->notes,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success'      => true,
+                'message'      => 'Booking jadwal konsultasi berhasil.',
+                'queue_order'  => $appointment->queue_order,
+                'appointment'  => $appointment,
+            ]);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menyimpan data booking: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function show(string $id)
+    {
+
+    }
+
+    public function edit(string $id)
+    {
+    }
+
+    public function update(Request $request, string $id)
+    {
+    }
+
+    public function destroy(string $id)
+    {
+    }
+}
