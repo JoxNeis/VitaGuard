@@ -52,6 +52,9 @@
         href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css"
         integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4="
         crossorigin="anonymous" />
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <!--end::Head-->
 <!--begin::Body-->
@@ -200,7 +203,11 @@
                             <!--begin::Menu Footer-->
                             <li class="user-footer">
                                 <a href="#" class="btn btn-default btn-flat">Profile</a>
-                                <a href="#" class="btn btn-default btn-flat float-end">Sign out</a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-default btn-flat float-end">Sign out</button>
+                                </form>
                             </li>
                             <!--end::Menu Footer-->
                         </ul>
@@ -214,63 +221,89 @@
         <!--end::Header-->
         <!--begin::Sidebar-->
         <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-            <!--begin::Sidebar Brand-->
-            <div class="sidebar-brand justify-content-start">
-                <!--begin::Brand Link-->
-                <a href="/admin/home" class="brand-link">
-                    <span class="brand-text fw-light">Vita<b>Guard</b></span>
-                </a>
-                <!--end::Brand Link-->
-            </div>
-            <div class="sidebar-wrapper">
-                <nav class="mt-2">
-                    <!--begin::Sidebar Menu-->
-                    <ul
-                        class="nav sidebar-menu flex-column"
-                        data-lte-toggle="treeview"
-                        role="menu"
-                        data-accordion="false">
-                        <li class="nav-item">
-                            <a href="/admin/" class="nav-link {{ Request::is('admin') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-house-door"></i>
-                                <p>Home</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/admin/doctors" class="nav-link {{ Request::is('admin/doctors') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-chat-heart"></i>
-                                <p>Doctors</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/admin/members" class="nav-link {{ Request::is('admin/members') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-chat-heart"></i>
-                                <p>Members</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/admin/articles" class="nav-link {{ Request::is('admin/articles') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-chat-heart"></i>
-                                <p>Articles</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/admin/consultations" class="nav-link {{ Request::is('admin/consultations') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-chat-heart"></i>
-                                <p>Consultations</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/admin/users" class="nav-link {{ Request::is('admin/users') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-calendar-check"></i>
-                                <p>Users</p>
-                            </a>
-                        </li>                                                                     
-                    <!--end::Sidebar Menu-->
-                </nav>
-            </div>
-            <!--end::Sidebar Wrapper-->
-        </aside>
+    <!--begin::Sidebar Brand-->
+    <div class="sidebar-brand justify-content-start">
+        <!--begin::Brand Link-->
+        <a href="/portal" class="brand-link">
+            <span class="brand-text fw-light">Vita<b>Guard</b></span>
+        </a>
+        <!--end::Brand Link-->
+    </div>
+    
+    <div class="sidebar-wrapper">
+        <nav class="mt-2">
+            <!--begin::Sidebar Menu-->
+            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">                               
+                <li class="nav-item">
+                    <a href="/portal" class="nav-link {{ Request::is('portal') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-house-door"></i>
+                        <p>Home / Dashboard</p>
+                    </a>
+                </li>                
+
+                <li class="nav-item">
+                    <a href="/portal/articles" class="nav-link {{ Request::is('portal/articles*') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-file-text"></i>
+                        <p>Articles</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/portal/consultations" class="nav-link {{ Request::is('portal/consultations*') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-chat-dots"></i>
+                        <p>Consultations</p>
+                    </a>
+                </li>                            
+
+                
+                @if(auth()->user()->role === \App\Data\Value\Account\Role::DOCTOR->value)
+                <li class="nav-item">
+                    <a href="/appointments/doctor" class="nav-link {{ Request::is('appointments/doctor*') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-chat-dots"></i>
+                        <p>Appointments</p>
+                    </a>
+                </li>   
+                <li class="nav-item">
+                    <a href="/profile" class="nav-link {{ Request::is('profile') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-person"></i>
+                        <p>Profile</p>
+                    </a>
+                </li>                            
+                @endif                         
+                
+                @if(auth()->user()->role === \App\Data\Value\Account\Role::ADMIN->value)
+                    <li class="nav-item mt-3">
+                        <h6 class="nav-header text-uppercase text-secondary text-xs font-weight-bolder opacity-7 px-3">System Admin</h6>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="/admin/doctors" class="nav-link {{ Request::is('admin/doctors*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-heart-pulse"></i>
+                            <p>Doctors</p>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="/admin/users" class="nav-link {{ Request::is('admin/users*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-shield-lock"></i>
+                            <p>Users (System)</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                    <a href="/admin/members" class="nav-link {{ Request::is('admin/members*') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-people"></i>
+                        <p>Members</p>
+                    </a>
+                </li>
+                @endif
+                
+            </ul>
+            <!--end::Sidebar Menu-->
+        </nav>
+    </div>
+    <!--end::Sidebar Wrapper-->
+</aside>
         <!--end::Sidebar-->
         <!--begin::App Main-->
         <main class="app-main">

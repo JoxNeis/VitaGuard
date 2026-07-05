@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\DB;
 
 class AppointmentController extends Controller
 {
-
     public function index()
     {
         $doctors = Doctor::all();

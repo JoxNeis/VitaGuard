@@ -8,7 +8,7 @@ const HttpService = {
         });
     },
 
-    post:function(address,data, successCallback, errorCallback){
+    post: function (address, data, successCallback, errorCallback) {
         $.ajax({
             url: address,
             method: "POST",
@@ -21,8 +21,21 @@ const HttpService = {
             error: errorCallback,
         });
     },
-    
-    
+
+    put: function (address, data, successCallback, errorCallback) {
+        $.ajax({
+            url: address,
+            method: "PUT",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success: successCallback,
+            error: errorCallback,
+        });
+    },
+
     getUser: function (successCallback) {
         $.ajax({
             url: "/api/user",

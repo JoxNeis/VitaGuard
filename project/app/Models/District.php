@@ -9,6 +9,9 @@ class District extends Model
 {
     use HasFactory;
 
+    public function city(){
+        return $this->belongsTo(City::class);
+    }
     public function doctors(){
         return $this->hasMany(Doctor::class,'district_id','id');
     }

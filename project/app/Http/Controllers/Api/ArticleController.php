@@ -15,8 +15,7 @@ class ArticleController extends Controller
      */
     public function index(Request $request)
     {
-        $articles = Article::all();
-        return view('pages.articles.index', compact('articles'));
+
     }
 
     /**
@@ -24,6 +23,8 @@ class ArticleController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Article::class);
+
         $creators = User::where([
             'role' => 'doctor',
             'status' => 'active'
@@ -42,6 +43,8 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Article::class);
+
         $request->validate([
             'title' => 'required|string|max:255',
             'creator' => 'required|string|max:255',
@@ -75,12 +78,11 @@ class ArticleController extends Controller
      */
     public function show(string $id)
     {
-        $article = Article::find($id);
+        $article = Article::with(['topic', 'creator'])->findOrFail($id);
         return response()->json([
             'success' => true,
             'article' => $article
-        ]);
-        // return view('articles.read', compact('article'));
+        ]);        
     }
 
     /**
@@ -88,6 +90,7 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
+        $this->authorize('update', $article);
         //WHO CAN EDIT?
         //ADMIN -> Check by MIDDLEWARE & CREATOR -> Check by BUSSINESS LOGIC (Service)
         $article->load('topic');
@@ -103,6 +106,8 @@ class ArticleController extends Controller
      */
     public function update(Request $request, Article $article)
     {
+        $this->authorize('update', $article);
+
         $request->validate([
             'title' => 'required|string|max:255',
             'creator' => 'required|string|max:255',
@@ -136,6 +141,8 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
+        $this->authorize('delete', $article);
+
         $article->delete();
 
         return response()->json([
@@ -144,9 +151,38 @@ class ArticleController extends Controller
         ]);
     }
 
-    public function fetchArticles()
-    {
-        $articles = Article::with(['topic', 'creator'])->get();
+    public function getPublicArticles(Request $request)
+    {        
+        $articles = Article::with(['topic', 'creator'])
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $query->where('title', 'like', '%' . $request->search . '%');
+            })
+            ->latest()
+            ->paginate(10);
+
+        return response()->json([
+            'success' => true,
+            'data' => $articles,
+        ]);
+    }
+
+    public function fetchArticles(Request $request)
+    {        
+        $this->authorize('viewBackend', Article::class);
+
+        $user = auth()->user();
+        
+        $query = Article::with(['topic', 'creator']);
+        
+        if ($user->role === \App\Data\Value\Account\Role::DOCTOR->value) {
+            $query->where('creator', $user->username);
+        }
+       
+        $articles = $query->when($request->filled('search'), function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%');
+            })
+            ->latest()
+            ->paginate(10);
 
         return response()->json([
             'success' => true,
@@ -156,7 +192,7 @@ class ArticleController extends Controller
 
     public function getLatestArticles(Request $request)
     {
-        $query = Article::query();
+        $query = Article::query()->with('topic');
 
         if ($request->has('topic')) {
             $query->where('article_topic_id', $request->topic);
@@ -181,7 +217,7 @@ class ArticleController extends Controller
     {
         $topics = ArticleTopic::withCount('articles')
             ->orderBy('articles_count', 'desc')
-            ->take(5)
+            ->take(3)
             ->get();
 
         if (count($topics) > 0) {

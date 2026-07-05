@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('layouts.navbar.main')
 @section('content')
 <div id="carouselExampleIndicators" class="carousel slide carousel-custom" data-ride="carousel">
     <ol class="carousel-indicators">

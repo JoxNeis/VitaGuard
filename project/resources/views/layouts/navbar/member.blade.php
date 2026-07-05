@@ -9,8 +9,8 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item {{ Request::is('home') ? 'active' : '' }}">
-                <a class="nav-link" href="/home">Home</a>
+            <li class="nav-item {{ Request::is('/') ? 'active' : '' }}">
+                <a class="nav-link" href="/">Home</a>
             </li>
             <li class="nav-item {{ Request::is('consultations*') ? 'active' : '' }}">
                 <a class="nav-link" href="/consultations">Consultations</a>
@@ -21,9 +21,9 @@
             <li class="nav-item {{ Request::is('doctors*') ? 'active' : '' }}">
                 <a class="nav-link" href="/doctors">Doctors</a>
             </li>
-            <!-- <li class="nav-item {{ Request::is('history-consultations*') ? 'active' : '' }}">
-                <a class="nav-link" href="/history-consultations">History Consultations</a>
-            </li> -->
+            <li class="nav-item {{ Request::is('profile*') ? 'active' : '' }}">
+                <a class="nav-link" href="/profile">Profile</a>
+            </li>
 
             @guest
             <li class="nav-item">

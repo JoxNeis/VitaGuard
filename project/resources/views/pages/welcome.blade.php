@@ -62,7 +62,7 @@
         </div>
 
         <div class="mb-4">
-            <a href="/artikel" class="text-primary">Lihat semua artikel &raquo;</a>
+            <a href="/articles/" class="text-primary">Lihat semua artikel &raquo;</a>
         </div>
 
         <div class="container" id="article-container">

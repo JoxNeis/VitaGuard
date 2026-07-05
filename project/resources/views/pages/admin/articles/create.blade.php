@@ -6,7 +6,7 @@
                 <h4><i class="bi bi-file-earmark-plus text-primary"></i> Add New Article</h4>
                 <p class="text-muted mb-0">Lengkapi formulir di bawah ini untuk menerbitkan artikel baru.</p>
             </div>
-            <a href="/admin/articles" class="btn btn-outline-secondary btn-sm shadow-sm">
+            <a href="/portal/articles" class="btn btn-outline-secondary btn-sm shadow-sm">
                 <i class="bi bi-arrow-left"></i> Back to List
             </a>
         </div>
@@ -104,7 +104,7 @@
                 let creatorSelect = $('#creator');
 
                 $.ajax({                    
-                    url: '/api/admin/articles/create-data',
+                    url: '/api/articles/create-data',
                     method: 'GET',
                     success: function (response) {
                         if (response.success) {

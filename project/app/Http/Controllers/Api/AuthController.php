@@ -36,12 +36,17 @@ class AuthController extends Controller
             ...$credentials,
             'ip' => $request->ip(),
         ]);
-                   
+
+        $redirectUrl = '/'; 
+        if ($result['user']->role !== 'member') {
+            $redirectUrl = '/' . $result['user']->role; 
+        }
+
         return response()->json([
             'message' => 'Login successful',
             'token' => $result['token'],
             'user' => $result['user'],
-            'redirect_url' => $result['user']->role ."/",
+            'redirect_url' => $redirectUrl,
             // admin/home
         ]);
     }

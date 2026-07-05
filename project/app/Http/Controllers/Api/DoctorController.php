@@ -11,6 +11,7 @@ use App\Models\District;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Data\Value\Account\Role;
 
 class DoctorController extends Controller
 {
@@ -44,49 +45,70 @@ class DoctorController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'username' => 'required|string|max:50|alpha_num|unique:users,username|unique:doctors,username',
-            'password' => 'required|string|min:6',
-            'email' => 'required|email|max:255|unique:users,email',
-            'phone_number' => 'required|string|max:20',
-            'first_name' => 'required|string|max:100',
-            'last_name' => 'required|string|max:100',
+        //Cek apakah username sudah ada di tabel users
+        $existingUser = User::where('username', $request->username)->first();
+
+        $rules = [
+            'first_name'    => 'required|string|max:100',
+            'last_name'     => 'required|string|max:100',
+            'prefix_name'   => 'nullable|string|max:20',
+            'middle_name'   => 'nullable|string|max:100',
+            'suffix_name'   => 'nullable|string|max:20',
             'date_of_birth' => 'required|date',
-            'address' => 'required|string|max:255',
-            'district_id' => 'required|exists:districts,id',
-            'specialties' => 'required|array',
-        ], [
-            'username.unique' => 'Username sudah digunakan oleh pengguna lain.',
+            'address'       => 'required|string|max:255',
+            'district_id'   => 'required|exists:districts,id',
+            'specialties'   => 'required|array',
+        ];
+
+        $messages = [
+            'username.unique' => 'Username sudah digunakan oleh pengguna lain atau sudah terdaftar sebagai dokter.',
             'username.alpha_num' => 'Username hanya boleh berisi huruf dan angka tanpa spasi.'
-        ]);
+        ];
+        
+        if ($existingUser) {            
+            $rules['username'] = 'required|string|max:50|alpha_num|unique:doctors,username';
+        } else {            
+            $rules['username']     = 'required|string|max:50|alpha_num|unique:users,username|unique:doctors,username';
+            $rules['password']     = 'required|string|min:6';
+            $rules['email']        = 'required|email|max:255|unique:users,email';
+            $rules['phone_number'] = 'required|string|max:20';
+        }
+      
+        $request->validate($rules, $messages);
 
         DB::beginTransaction();
 
-        try {
-            User::create([
-                'username' => $request->username,
-                'password_hashed' => Hash::make($request->password),
-                'email' => $request->email,
-                'phone_number' => $request->phone_number,
-                'status' => 'active',
-                'role' => 'doctor',
-            ]);
-
+        try {            
+            if ($existingUser) {                
+                $existingUser->update([
+                    'role' => Role::DOCTOR->value
+                ]);
+            } else {                
+                User::create([
+                    'username'        => $request->username,
+                    'password_hashed' => Hash::make($request->password),
+                    'email'           => $request->email,
+                    'phone_number'    => $request->phone_number,
+                    'status'          => 'active',
+                    'role'            => 'doctor',
+                ]);
+            }
+            
             Doctor::create([
-                'username' => $request->username,
-                'prefix_name' => $request->prefix_name,
-                'first_name' => $request->first_name,
-                'middle_name' => $request->middle_name,
-                'last_name' => $request->last_name,
-                'suffix_name' => $request->suffix_name,
+                'username'      => $request->username,
+                'prefix_name'   => $request->prefix_name,
+                'first_name'    => $request->first_name,
+                'middle_name'   => $request->middle_name,
+                'last_name'     => $request->last_name,
+                'suffix_name'   => $request->suffix_name,
                 'date_of_birth' => $request->date_of_birth,
-                'address' => $request->address,
-                'district_id' => $request->district_id,
+                'address'       => $request->address,
+                'district_id'   => $request->district_id,
             ]);
-
+            
             foreach ($request->specialties as $specialtyId) {
                 DoctorSpecialty::create([
-                    'doctor' => $request->username,
+                    'doctor'       => $request->username,
                     'specialty_id' => $specialtyId
                 ]);
             }

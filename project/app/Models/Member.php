@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 class Member extends Model
 {
     use HasFactory;
+    protected $primaryKey = 'username';
+    public $incrementing = false;
+    protected $keyType = 'string';
+    protected $guarded = []; 
 
     public function user()
     {

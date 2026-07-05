@@ -1,12 +1,10 @@
-@extends('layouts.navbar.main')
+@extends('layouts.navbar.admin')
 
 @section('content')
-<div class="container mt-4 mb-5 pt-5">
+<div class="container mb-5">
     
     <div class="mb-3">
-        <a href="{{ route('doctor.index') }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Back
-        </a>
+        
     </div>
 
     <div class="mb-4">
