@@ -15,6 +15,8 @@ class Chat extends Model
         'sender',
     ];
 
+    public $timestamps = false;
+
     protected $casts = [
         'created_at' => 'datetime',
     ];

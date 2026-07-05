@@ -45,8 +45,8 @@ Route::prefix('api/')->group(function () {
         Route::get('articles/{article}/detail', [ArticleController::class, 'show']);
         Route::get('articles/{article}/edit-data', [ArticleController::class, 'edit'])->middleware('can:update,article');
         Route::get('consultations/fetch', [ConsultationController::class, 'fetchConsultations']);
-        Route::post('/consultations', [ConsultationController::class, 'store'])
-        ->name('consultation.store');
+        Route::get('/consultations/start/{doctor:username}', [ConsultationController::class, 'start'])
+        ->name('consultation.start');
         Route::get('chat/{consultation}', [ChatController::class, 'fetchMessages']);   
         Route::put('/appointments/{id}/status', [AppointmentController::class, 'updateStatus']); 
         Route::middleware(['auth'])->group(function () {

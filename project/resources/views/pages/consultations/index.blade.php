@@ -160,12 +160,19 @@
                     </div>
                     <div class="text-md-right">
                         @auth
-                            <a href="{{ route('chat', $doctor->consultation_id ?? 'new') }}"
-                                class="btn btn-block text-white font-weight-bold py-2 shadow-sm"
-                                style="background-color: #ea580c; border-radius: 8px;">
-                                    Chat
+                            @if($doctor->consultation_id)
+                                <a href="{{ route('chat', $doctor->consultation_id) }}"
+                                    class="btn btn-block text-white font-weight-bold py-2 shadow-sm"
+                                    style="background-color: #ea580c; border-radius: 8px;">
+                                    <i class="bi bi-chat-dots"></i> Chat
                                 </a>
-                    @endauth
+                                <a href="{{ route('consultation.start', $doctor->username) }}"
+                                    class="btn btn-block btn-primary font-weight-bold py-2 shadow-sm"
+                                    style="background-color: #2563eb; border-radius: 8px;">
+                                    <i class="bi bi-calendar-plus"></i> Mulai Chat
+                                </a>
+                            @endif
+                        @endauth
 
                         @guest
                         <button type="button"
@@ -215,7 +222,8 @@
                         <input type="password" name="password" class="form-control" placeholder="Input your password" id="password" required>
                     </div>
 
-                </div>                
+                </div>             
+
                 <div class="modal-footer border-top-0 flex-column px-4 pb-4 pt-0">
                     <button type="submit" class="btn btn-block btn-primary text-white font-weight-bold py-2 shadow-sm">
                         Log In
@@ -231,7 +239,44 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="bookingModal" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Buat Janji Konsultasi</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="booking_doctor_id">
+                    <div class="form-group">
+                        <label>Tanggal</label>
+                        <input type="date" id="booking_date" class="form-control" min="{{ date('Y-m-d') }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pilih Jadwal</label>
+                        <select id="booking_schedule" class="form-control">
+                            <option value="">-- Pilih Jadwal --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Catatan (opsional)</label>
+                        <textarea name="notes" id="notes" class="form-control" rows="3"
+                                placeholder="Tulis keluhan atau catatan tambahan..."></textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="btn-submit-booking">Buat Janji</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endpush
+
 <style>
     @media (min-width: 768px) {
         .custom-border-left {

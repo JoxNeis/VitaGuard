@@ -8,6 +8,7 @@ use App\Models\Member;
 use App\Models\OnlineSession;
 use App\Models\Doctor;
 use App\Models\Specialty;
+use App\Models\DoctorSchedule;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
 use Illuminate\Support\Facades\DB;
@@ -69,8 +70,9 @@ class ConsultationController extends Controller
         }
 
         $specialties = Specialty::all();
+        $schedules = DoctorSchedule::all();
 
-        return view('pages.consultations.index', compact('doctors', 'specialties'));
+        return view('pages.consultations.index', compact('doctors', 'specialties', 'schedules'));
     }
 
 
@@ -108,6 +110,52 @@ class ConsultationController extends Controller
     public function doctor()
     {
         return view('pages.consultations.doctor');
+    }
+
+    public function start(Doctor $doctor)
+    {
+        $patient = auth()->user()->username;
+
+        $existing = Consultation::where('patient', $patient)
+            ->whereHas('onlineSession', function ($q) use ($doctor) {
+                $q->where('doctor', $doctor->username);
+            })
+            ->whereNull('end_time')
+            ->first();
+
+        if ($existing) {
+            return redirect()->route('chat', $existing->id);
+        }
+
+        try {
+            $consultation = null;
+            DB::transaction(function () use ($patient, $doctor, &$consultation) {
+                $onlineSession = OnlineSession::create([
+                    'doctor' => $doctor->username,
+                    'start_time' => now(),
+                    'end_time' => null,
+                    'consultation_fee' => 0,
+                    'description' => 'Konsultasi chat langsung',
+                ]);
+
+                $consultation = Consultation::create([
+                    'online_session_id' => $onlineSession->id,
+                    'patient' => $patient,
+                    'start_time' => now(),
+                    'end_time' => null,
+                    'notes' => null,
+                    'paid_at' => null,
+                ]);
+            });
+
+            if ($consultation) {
+                return redirect()->route('chat', $consultation->id);
+            }
+
+            return redirect()->back()->with('error', 'Gagal membuat konsultasi.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 
     /**

@@ -116,7 +116,7 @@ class AppointmentController extends Controller
 
         $appointment = Appointment::findOrFail($id);
 
-        // Cek otorisasi: hanya dokter yang memiliki schedule appointment ini atau admin
+
         if ($user->role == 'doctor') {
             $schedule = $appointment->schedule;
             if (!$schedule || $schedule->doctor != $user->username) {
