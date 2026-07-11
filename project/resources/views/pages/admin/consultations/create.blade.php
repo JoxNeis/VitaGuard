@@ -84,7 +84,7 @@
 
                             let sessionSelect = $('#online_session_id').empty().append('<option value="" disabled selected>-- Pilih Sesi Dokter --</option>');
                             $.each(response.online_sessions, function (i, s) {
-                                let docName = s.doctor.first_name ? `${s.doctor.first_name} ${s.doctor.last_name}` : s.doctor;
+                                let docName = s.doctor_data ? `${s.doctor_data.first_name} ${s.doctor_data.last_name}` : "-";
                                 sessionSelect.append(`<option value="${s.id}">ID: ${s.id} - Dr. ${docName}</option>`);
                             });
                         }

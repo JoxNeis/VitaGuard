@@ -1,7 +1,7 @@
 @extends('layouts.navbar.main')
 
 @section('content')
-<div class="container mt-4 mb-5">
+<div class="container pt-5">
 
     <div class="mb-4">
         <h4 class="mb-1"><i class="bi bi-clipboard2-heart-fill text-primary"></i> Konsultasi Saya</h4>

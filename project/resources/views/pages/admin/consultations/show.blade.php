@@ -140,28 +140,40 @@
                         }
 
                         //patient_user sesuai relasi model
-                        let member = c.patient_user && c.patient_user.member ? c.patient_user.member : null;
+                        let member = c.patient_data;
                         if (member) {
-                            let patientFullName = [member.first_name, member.middle_name, member.last_name].filter(Boolean).join(' ');
+                            let patientFullName = [
+                                member.first_name,
+                                member.middle_name,
+                                member.last_name
+                            ].filter(Boolean).join(' ');
+
                             $("#avatar-initial").text(member.first_name.charAt(0).toUpperCase());
                             $("#patient_name").html(`<strong>${patientFullName}</strong>`);
-                            $("#patient_demography").text(`${member.gender === 'male' ? 'Laki-laki' : 'Perempuan'} / ${member.date_of_birth}`);
+
+                            $("#patient_demography").text(
+                                `${member.gender === 'male' ? 'Laki-laki' : 'Perempuan'} / ${member.date_of_birth}`
+                            );
                         } else {
                             $("#avatar-initial").text(c.patient.charAt(0).toUpperCase());
-                            $("#patient_name, #patient_demography").text("-");
+                            $("#patient_name").text("-");
+                            $("#patient_demography").text("-");
                         }
 
-                        $("#patient_username").text(c.patient);
+                        $("#patient_username").text(member ? member.username : c.patient);
 
                         if (c.online_session) {
                             $("#online_session_id").text(c.online_session.id);
                             $("#consultation_fee").text(c.online_session.consultation_fee ? formatCurrency(c.online_session.consultation_fee) : "Rp 0");
 
-                            let doctor = c.online_session.doctor;
+                            let doctor = c.online_session.doctor_data;
                             if (doctor) {
-                                let doctorName = typeof doctor === 'object' && doctor.first_name
-                                    ? [doctor.prefix_name, doctor.first_name, doctor.last_name, doctor.suffix_name].filter(Boolean).join(' ')
-                                    : doctor;
+                                let doctorName = [
+                                    doctor.prefix_name,
+                                    doctor.first_name,
+                                    doctor.last_name,
+                                    doctor.suffix_name
+                                ].filter(Boolean).join(' ');
                                 $("#doctor_name").html(`<strong>${doctorName}</strong>`);
                             } else {
                                 $("#doctor_name").text("-");

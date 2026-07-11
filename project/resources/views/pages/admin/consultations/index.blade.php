@@ -27,14 +27,24 @@
                     <div class="table-responsive" id="table-wrapper" style="display: none;">
                         <table class="table table-hover table-striped mb-0" id="consultations-table">
                             <thead class="bg-light">
-                                <tr>
-                                    <th width="5%" class="text-center">ID</th>
-                                    <th width="20%">Pasien</th>
-                                    <th width="20%">Dokter (Sesi)</th>
-                                    <th width="25%">Jadwal Mulai</th>
-                                    <th width="15%" class="text-center">Status Bayar</th>
-                                    <th width="15%" class="text-center">Aksi</th>
-                                </tr>
+                            <tr>
+                                <th class="text-center" width="6%">#</th>
+                                <th width="30%">
+                                    <i class="bi bi-person"></i> Pasien
+                                </th>
+                                <th width="24%">
+                                    <i class="bi bi-person-badge"></i> Dokter
+                                </th>
+                                <th width="22%">
+                                    <i class="bi bi-calendar-event"></i> Jadwal
+                                </th>
+                                <th class="text-center" width="10%">
+                                    <i class="bi bi-credit-card"></i> Bayar
+                                </th>
+                                <th class="text-center" width="8%">
+                                    <i class="bi bi-gear"></i>
+                                </th>
+                            </tr>
                             </thead>
                             <tbody></tbody>
                         </table>
@@ -93,19 +103,31 @@
 
                             consultations.forEach(consultation => {                                
                                 let patientName = consultation.patient;
-                                if (consultation.patient_user && consultation.patient_user.member) {
-                                    let m = consultation.patient_user.member;
-                                    patientName = [m.first_name, m.middle_name, m.last_name].filter(Boolean).join(' ');
-                                } else if (consultation.member) {
-                                    let m = consultation.member;
-                                    patientName = [m.first_name, m.middle_name, m.last_name].filter(Boolean).join(' ');
+
+                                if (consultation.patient_data) {
+                                    let m = consultation.patient_data;
+
+                                    patientName = [
+                                        m.first_name,
+                                        m.middle_name,
+                                        m.last_name
+                                    ].filter(Boolean).join(' ');
                                 }
                                 
                                 let doctorName = '-';
-                                if (consultation.online_session) {                                   
-                                    doctorName = consultation.online_session.doctor.first_name
-                                        ? consultation.online_session.doctor.first_name
-                                        : consultation.online_session.doctor;
+
+                                if (
+                                    consultation.online_session &&
+                                    consultation.online_session.doctor_data
+                                ) {
+                                    let d = consultation.online_session.doctor_data;
+
+                                    doctorName = [
+                                        d.prefix_name,
+                                        d.first_name,
+                                        d.last_name,
+                                        d.suffix_name
+                                    ].filter(Boolean).join(' ');
                                 }
 
                                 let startDate = new Date(consultation.start_time).toLocaleString('id-ID', {
@@ -113,12 +135,16 @@
                                 });
                                
                                 let paymentStatus = consultation.paid_at
-                                    ? '<span class="badge bg-success">Lunas</span>'
-                                    : '<span class="badge bg-warning">Belum Bayar</span>';
+                                    ? '<span class="badge bg-success px-3 py-2">Lunas</span>'
+                                    : '<span class="badge bg-warning text-dark px-3 py-2">Belum Bayar</span>'
                                                                
                                 let actionButtons = `
-                                    <a href="/portal/consultations/${consultation.id}/show" class="btn btn-sm btn-warning text-white" title="Detail">
-                                        Detail
+                                    <a href="/portal/consultations/${consultation.id}/show"
+                                    class="btn btn-sm btn-primary">
+
+                                    <i class="bi bi-eye"></i>
+                                    Detail
+
                                     </a>
                                 `;
                                
@@ -131,17 +157,86 @@
                                 @endif
 
                                 rowsHtml += `
-                                        <tr id="tr_${consultation.id}">
-                                            <td class="text-center">${consultation.id}</td>
-                                            <td><strong>${patientName}</strong><br><small class="text-muted">${consultation.patient}</small></td>
-                                            <td>${doctorName}</td>
-                                            <td>${startDate}</td>
-                                            <td class="text-center">${paymentStatus}</td>
-                                            <td class="text-center">
-                                                ${actionButtons}
-                                            </td>
-                                        </tr>
-                                    `;
+                                <tr id="tr_${consultation.id}" class="align-middle">
+
+                                    <td class="text-center fw-bold">
+                                        #${consultation.id}
+                                    </td>
+
+                                    <td>
+                                        <div class="d-flex align-items-center">
+
+                                            <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center me-3"
+                                                style="width:42px;height:42px;font-weight:bold;">
+
+                                                ${patientName.charAt(0).toUpperCase()}
+
+                                            </div>
+
+                                            <div>
+
+                                                <div class="fw-bold">
+                                                    ${patientName}
+                                                </div>
+
+                                                <small class="text-muted">
+                                                    @${consultation.patient}
+                                                </small>
+
+                                            </div>
+
+                                        </div>
+                                    </td>
+
+                                    <td>
+
+                                        ${
+                                            doctorName == '-'
+                                            ?
+                                            '<span class="text-muted"><i class="bi bi-dash-circle"></i> Belum ditentukan</span>'
+                                            :
+                                            `<span class="fw-semibold">${doctorName}</span>`
+                                        }
+
+                                    </td>
+
+                                    <td>
+
+                                        <div class="fw-semibold">
+
+                                            ${new Date(consultation.start_time).toLocaleDateString('id-ID',{
+                                                day:'numeric',
+                                                month:'short',
+                                                year:'numeric'
+                                            })}
+
+                                        </div>
+
+                                        <small class="text-muted">
+
+                                            ${new Date(consultation.start_time).toLocaleTimeString('id-ID',{
+                                                hour:'2-digit',
+                                                minute:'2-digit'
+                                            })}
+
+                                        </small>
+
+                                    </td>
+
+                                    <td class="text-center">
+
+                                        ${paymentStatus}
+
+                                    </td>
+
+                                    <td class="text-center">
+
+                                        ${actionButtons}
+
+                                    </td>
+
+                                </tr>
+                                `;
                             });
                         
                             tbody.html(rowsHtml);
@@ -176,7 +271,7 @@
                 btn.html('<span class="spinner-border spinner-border-sm"></span> Menghapus...').prop('disabled', true);
 
                 $.ajax({                                       
-                    url: `/api/portal/consultations/${consultationToDelete}/destroy`,
+                    url: `/api/admin/consultations/${consultationToDelete}/destroy`,
                     method: 'POST',
                     data: {
                         '_token': '{{ csrf_token() }}'
@@ -207,4 +302,30 @@
 
         });
     </script>
+
+<style>
+
+#consultations-table tbody tr{
+    transition:.2s;
+}
+
+#consultations-table tbody tr:hover{
+    transform:scale(1.005);
+    box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+#consultations-table td{
+    vertical-align:middle;
+}
+
+#consultations-table thead th{
+    font-weight:600;
+    color:#495057;
+}
+
+.card{
+    border-radius:14px;
+}
+
+</style>
 @endsection

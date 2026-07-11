@@ -6,7 +6,7 @@
 @extends($layout)
 
 @section('content')
-<div class="container mt-4 mb-5">
+<div class="container pt-5">
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
@@ -32,7 +32,7 @@
 
     <div class="card border-0 shadow-sm" style="border-radius:16px; overflow:hidden;">
         <div id="chat-messages"
-            style="height:460px; overflow-y:auto; padding:24px; background:#f8fafc;">
+    style=" height:65vh; min-height:420px; max-height:700px; overflow-y:auto; padding:24px; background:#f8fafc; ">
             <div id="chat-loading" class="text-center py-5">
                 <div class="spinner-border text-primary" role="status"></div>
                 <p class="mt-2 text-muted">Memuat pesan...</p>
@@ -192,8 +192,8 @@ $(document).ready(function () {
                     html += `
                         <div class="d-flex justify-content-start mb-3">
                             <div style="max-width:65%;">
-                                <small class="text-muted d-block mb-1">
-                                    <i class="bi bi-person-circle"></i> ${escapeHtml(chat.sender)}
+                                <small class="text-muted d-block mb-1 font-weight-bold">
+                                    <i class="bi bi-person-circle"></i> ${escapeHtml(chat.sender_name)}
                                 </small>
                                 <div class="p-2 px-3"
                                     style="background:#ffffff; border:1px solid #e5e7eb; border-radius:18px 18px 18px 4px; word-break:break-word;">

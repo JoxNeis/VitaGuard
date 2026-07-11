@@ -25,7 +25,7 @@ class OnlineSession extends Model
         'consultation_fee' => 'decimal:2',
     ];
 
-    public function doctor()
+    public function doctorData()
     {
         return $this->belongsTo(Doctor::class, 'doctor', 'username');
     }

@@ -90,7 +90,7 @@ class ConsultationController extends Controller
     {
         $members = Member::select('username', 'first_name', 'middle_name', 'last_name')->get();
 
-        $onlineSessions = OnlineSession::with('doctor')
+        $onlineSessions = OnlineSession::with('doctorData')
             ->whereNull('deleted_at')
             ->orderBy('start_time', 'desc')
             ->get();
@@ -204,7 +204,10 @@ class ConsultationController extends Controller
      */
     public function show($id)
     {
-        $consultation = Consultation::with(['patientUser.member', 'onlineSession.doctor'])->find($id);
+        $consultation = Consultation::with([
+            'patientData',
+            'onlineSession.doctorData'
+        ])->find($id);
 
         if (!$consultation) {
             return response()->json([
@@ -318,12 +321,12 @@ class ConsultationController extends Controller
         if ($user->role === 'doctor') {
             $sessionIds = OnlineSession::where('doctor', $user->username)->pluck('id');
 
-            $consultations = Consultation::with('onlineSession')
+            $consultations = Consultation::with('onlineSession.doctorData')
                 ->whereIn('online_session_id', $sessionIds)
                 ->orderBy('start_time', 'desc')
                 ->get();
         } else {
-            $consultations = Consultation::with('onlineSession')
+            $consultations = Consultation::with('onlineSession.doctorData')
                 ->where('patient', $user->username)
                 ->orderBy('start_time', 'desc')
                 ->get();
@@ -333,7 +336,7 @@ class ConsultationController extends Controller
             return [
                 'id' => $c->id,
                 'patient' => $c->patient,
-                'doctor' => $c->onlineSession->doctor ?? '-',
+                'doctor' => $c->onlineSession->doctorData ? $c->onlineSession->doctorData->first_name . ' ' . $c->onlineSession->doctorData->last_name : $c->onlineSession->doctor,
                 'start_time' => $c->start_time ? $c->start_time->format('d M Y H:i') : '-',
                 'end_time' => $c->end_time ? $c->end_time->format('d M Y H:i') : null,
                 'notes' => $c->notes,
@@ -350,7 +353,7 @@ class ConsultationController extends Controller
 
     public function fetchAllConsultations()
     {
-        $consultations = Consultation::with(['patientUser.member', 'onlineSession.doctor'])->get();
+        $consultations = Consultation::with(['patientData', 'onlineSession.doctorData'])->get();
 
         return response()->json([
             'success' => true,

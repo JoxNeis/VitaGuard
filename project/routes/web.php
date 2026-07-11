@@ -98,7 +98,7 @@ Route::prefix('api/')->group(function () {
         Route::post('doctors/{doctor}/destroy', [DoctorController::class, 'destroy'])->name('doctor.deleteData');
         Route::post('members/{username}/destroy', [MemberController::class, 'destroy'])->name('member.deleteData');
         Route::post('users/{username}/destroy', [UserController::class, 'destroy'])->name('user.deleteData');
-        Route::post('consultations/{username}/destroy', [ConsultationController::class, 'destroy'])->name('consultation.deleteData');
+        Route::post('consultations/{id}/destroy', [ConsultationController::class, 'destroy'])->name('consultation.deleteData');
     });
 });
 #endregion

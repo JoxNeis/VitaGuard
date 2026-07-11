@@ -13,15 +13,21 @@ class ChatController extends Controller
      */
     public function index($consultation)
     {
-        $consultation = Consultation::with('onlineSession')->find($consultation);
+        $consultation = Consultation::with([
+            'patientData',
+            'onlineSession.doctorData'
+        ])->findOrFail($consultation);
 
         return response()->json([
             'success' => true,
             'data' => [
                 'id'                => $consultation->id,
                 'online_session_id' => $consultation->online_session_id,
-                'patient'           => $consultation->patient,
-                'doctor'            => $consultation->onlineSession->doctor ?? '-',
+                'patient' => optional($consultation->patientData)->first_name . ' ' .
+                            optional($consultation->patientData)->last_name,
+                'doctor'  => 'dr. ' .
+                            optional($consultation->onlineSession->doctorData)->first_name . ' ' .
+                            optional($consultation->onlineSession->doctorData)->last_name,
                 'start_time'        => $consultation->start_time,
                 'end_time'          => $consultation->end_time,
                 'notes'             => $consultation->notes,
@@ -33,11 +39,33 @@ class ChatController extends Controller
 
     public function fetchMessages($consultation)
     {
+        $consultationData = Consultation::with([
+            'patientData',
+            'onlineSession.doctorData'
+        ])->findOrFail($consultation);
+
         $chats = Chat::where('consultation_id', $consultation)
             ->orderBy('created_at', 'asc')
-            ->get();
+            ->get()
+            ->map(function ($chat) use ($consultationData) {
 
-        $consultationData = Consultation::find($consultation);
+                if ($chat->sender == $consultationData->patient) {
+
+                    $chat->sender_name =
+                        optional($consultationData->patientData)->first_name . ' ' .
+                        optional($consultationData->patientData)->last_name;
+
+                } else {
+
+                    $chat->sender_name =
+                        'dr. ' .
+                        optional($consultationData->onlineSession->doctorData)->first_name . ' ' .
+                        optional($consultationData->onlineSession->doctorData)->last_name;
+                }
+
+                return $chat;
+            });
+
         $isActive = is_null($consultationData->end_time);
 
         return response()->json([
@@ -45,8 +73,13 @@ class ChatController extends Controller
             'data'         => $chats,
             'is_active'    => $isActive,
             'current_user' => auth()->user()->username,
-            'patient'      => $consultationData->patient,
-            'doctor'       => $consultationData->onlineSession->doctor ?? '-',
+            'patient' =>
+                optional($consultationData->patientData)->first_name . ' ' .
+                optional($consultationData->patientData)->last_name,
+            'doctor' =>
+                'dr. ' .
+                optional($consultationData->onlineSession->doctorData)->first_name . ' ' .
+                optional($consultationData->onlineSession->doctorData)->last_name,
             'end_time'     => $consultationData->end_time,
         ]);
     }

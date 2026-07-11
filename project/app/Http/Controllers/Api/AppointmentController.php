@@ -3,10 +3,13 @@
 // namespace App\Http\Controllers\Api;
 namespace App\Http\Controllers\Api;
 
+
 use App\Models\Appointment;
 use App\Models\Doctor;
 use App\Models\DoctorSchedule;
 use App\Models\Specialty;
+use App\Models\Consultation;
+use App\Models\OnlineSession;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -131,6 +134,46 @@ class AppointmentController extends Controller
 
         $appointment->status = $request->status;
         $appointment->save();
+
+        if ($request->status === 'confirmed') {
+
+            // Cek apakah consultation sudah pernah dibuat
+            $existingConsultation = Consultation::where('patient', $appointment->patient)
+                ->whereNull('end_time')
+                ->first();
+
+            if (!$existingConsultation) {
+
+                $doctorUsername = $appointment->schedule->doctor;
+
+                $existingConsultation = Consultation::where('patient', $appointment->patient)
+                    ->whereHas('onlineSession', function ($q) use ($doctorUsername) {
+                        $q->where('doctor', $doctorUsername);
+                    })
+                    ->whereNull('end_time')
+                    ->first();
+
+                if (!$existingConsultation) {
+
+                    $onlineSession = OnlineSession::create([
+                        'doctor' => $doctorUsername,
+                        'start_time' => now(),
+                        'end_time' => null,
+                        'consultation_fee' => 0,
+                        'description' => 'Appointment #' . $appointment->id,
+                    ]);
+
+                    Consultation::create([
+                        'online_session_id' => $onlineSession->id,
+                        'patient' => $appointment->patient,
+                        'start_time' => now(),
+                        'end_time' => null,
+                        'notes' => $appointment->notes,
+                        'paid_at' => null,
+                    ]);
+                }
+            }
+        }
 
         return response()->json(['success' => true, 'message' => 'Status updated']);
     }

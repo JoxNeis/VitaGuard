@@ -33,9 +33,9 @@ class Consultation extends Model
         return $this->belongsTo(OnlineSession::class, 'online_session_id');
     }
 
-    public function patientUser()
+    public function patientData()
     {
-        return $this->belongsTo(User::class, 'patient', 'username');
+        return $this->belongsTo(Member::class, 'patient', 'username');
     }
 
     public function isActive(): bool
