@@ -7,8 +7,8 @@
                 <h4><i class="bi bi-file-earmark-text text-primary"></i> Article Detail</h4>
                 <p class="text-muted mb-0">View complete article information.</p>
             </div>
-            <a href="/portal/articles" class="btn btn-outline-secondary shadow-sm">
-                <i class="bi bi-arrow-left"></i> Back
+            <a href="/admin/articles" class="btn btn-outline-secondary btn-sm shadow-sm">
+                <i class="bi bi-arrow-left"></i> Back to List
             </a>
         </div>
         <div class="card shadow border-0">
@@ -55,15 +55,15 @@
         $(document).ready(function () {
             let pathSegments = window.location.pathname.split('/');
             let articleId = pathSegments[pathSegments.length - 2];
-            $('#btn-edit').attr('href', `/portal/articles/${articleId}/edit`);
+            $('#btn-edit').attr('href', `/admin/articles/${articleId}/edit`);
             $.ajax({
-                url: `/api/articles/${articleId}/detail`,
+                url: `/api/admin/articles/${articleId}/detail`,
                 method: 'GET',
                 success: function (response) {
                     if (!response.success) return;
                     let article = response.article;
                     $('#title').text(article.title);
-                    $('#creator').text(article.creator);
+                    $('#creator').text(article.creator.username);
                     $('#topic').text(
                         article.topic
                             ? article.topic.name

@@ -13,6 +13,19 @@ class Member extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     protected $guarded = []; 
+    protected $fillable = [
+        'username',
+        'first_name',
+        'middle_name',
+        'last_name',
+        'gender',
+        'date_of_birth',
+        'address',
+        'district_id',
+    ];
+    protected $casts = [
+        'date_of_birth' => 'date',
+    ];
 
     public function user()
     {

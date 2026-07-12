@@ -6,7 +6,7 @@
                 <h4><i class="bi bi-pencil-square text-primary"></i> Edit Article</h4>
                 <p class="text-muted mb-0">Perbarui informasi artikel medis Anda di bawah ini.</p>
             </div>
-            <a href="/portal/articles" class="btn btn-outline-secondary btn-sm shadow-sm">
+            <a href="/admin/articles" class="btn btn-outline-secondary btn-sm shadow-sm">
                 <i class="bi bi-arrow-left"></i> Back to List
             </a>
         </div>
@@ -113,7 +113,7 @@
             
             function loadArticleDetail() {
                 $.ajax({
-                    url: `/api/articles/${article_id}/edit-data`,
+                    url: `/api/admin/articles/${article_id}/edit-data`,
                     method: 'GET',
                     success: function (response) {
                         if (response.success) {

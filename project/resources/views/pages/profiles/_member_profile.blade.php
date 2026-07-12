@@ -33,9 +33,17 @@
                                 <span class="fw-semibold" id="member-status">-</span>
                             </div>
 
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Login Terakhir</span>
                                 <span class="fw-semibold text-end" id="member-last-login">-</span>
+                            </div>
+
+                            <div class="d-grid">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-grid w-100">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger w-100">Sign out</button>
+                                </form>
                             </div>
                         </div>
                     </div>

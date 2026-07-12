@@ -50,31 +50,25 @@
     <script>
         $(document).ready(function () {
 
-            $('#login-form').on('submit', function (e) {
-                // 1. Mencegat aksi default browser
+            $('#login-form').on('submit', function (e) {                
                 e.preventDefault();
-
-                // 2. Mengambil data dari inputan HTML
+                
                 const formData = {
                     username: $('#username').val(),
                     password: $('#password').val(),
                     device_name: 'web-browser'
                 };
-
-                // 3. Menghapus pesan error merah sebelumnya (jika ada)
+                
                 $('.validation-error').remove();
-
-                // 4. Memanggil API lewat HttpService
+                
                 HttpService.post(
                     "/api/auth/login",
                     formData,
-
-                    // Callback 1: Jika Login SUKSES
+                    
                     function (response) {
                         window.location.href = response.redirect_url;
                     },
-
-                    // Callback 2: Jika Login GAGAL
+                    
                     function (error) {
                         if (error.status === 422) {
                             let validationErrors = error.responseJSON.errors;

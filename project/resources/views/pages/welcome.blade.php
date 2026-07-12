@@ -133,7 +133,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="card-body">
-                                                        <h5 class="card-title">${article.title}</h5>
+                                                        <a href="/articles/${article.id}" class="card-title text-dark">${article.title}</a>
                                                         <div class="d-flex align-items-center">
                                                             <span class="badge badge-primary mr-2">Info Kesehatan</span>
                                                             <p class="card-text mb-0"><small class="text-muted">Diperbarui pada ${new Date(article.updated_at).toLocaleDateString('id-ID')}</small></p>

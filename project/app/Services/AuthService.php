@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Models\Member;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
@@ -22,6 +25,8 @@ class AuthService
      * @param array{
      *     username:string,
      *     password:string,
+     *     email:string,
+     *     phone_number:?string,
      *     ip:string,
      *     device_name:string
      * } $credentials
@@ -63,6 +68,32 @@ class AuthService
         ];
     }
 
+    public function register(array $data): User
+    {
+        return DB::transaction(function () use ($data) {
+            $user = User::create([
+                'username' => $data['username'],
+                'email' => $data['email'],
+                'phone_number' => $data['phone_number'] ?? null,
+                'password_hashed' => Hash::make($data['password']),
+                'role' => 'member',
+                'status' => 'active',
+            ]);
+
+            Member::create([
+                'username' => $user->username,
+                'first_name' => $data['first_name'],
+                'middle_name' => $data['middle_name'] ?? null,
+                'last_name' => $data['last_name'],
+                'gender' => $data['gender'],
+                'date_of_birth' => $data['date_of_birth'],
+                'address' => $data['address'],
+                'district_id' => $data['district_id'],
+            ]);
+
+            return $user;
+        });
+    }
     #endregion
 
     #region AUTHENTICATION HELPERS

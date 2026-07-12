@@ -239,14 +239,7 @@
                         <i class="nav-icon bi bi-house-door"></i>
                         <p>Home / Dashboard</p>
                     </a>
-                </li>                
-
-                <li class="nav-item">
-                    <a href="/portal/articles" class="nav-link {{ Request::is('portal/articles*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-file-text"></i>
-                        <p>Articles</p>
-                    </a>
-                </li>
+                </li>                                
 
                 <li class="nav-item">
                     <a href="/portal/consultations" class="nav-link {{ Request::is('portal/consultations*') ? 'active' : '' }}">
@@ -274,6 +267,13 @@
                 @if(auth()->user()->role === \App\Data\Value\Account\Role::ADMIN->value)
                     <li class="nav-item mt-3">
                         <h6 class="nav-header text-uppercase text-secondary text-xs font-weight-bolder opacity-7 px-3">System Admin</h6>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="/admin/articles" class="nav-link {{ Request::is('admin/articles*') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-file-text"></i>
+                            <p>Articles</p>
+                        </a>
                     </li>
                     
                     <li class="nav-item">

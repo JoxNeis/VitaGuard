@@ -27,13 +27,16 @@ use App\Data\Value\Account\Role;
 
 #region API
 Route::prefix('api/')->group(function () {
+    Route::get('fetch-districts', [AuthController::class, 'create']);
     Route::get('articles/public', [ArticleController::class, 'getPublicArticles']);
     Route::get('articles/latest', [ArticleController::class, 'getLatestArticles']);
     Route::get('articles/topics', [ArticleController::class, 'getArticleTopics']);
+    Route::get('articles/{article}/detail', [ArticleController::class, 'show']);
     Route::get('articles/popular-topics', [ArticleController::class, 'getPopularArticleTopics']);
 
     Route::prefix('auth/')->group(function () {
         Route::post('login', [AuthController::class, 'login']);
+        Route::post('register', [AuthController::class, 'register']);
         Route::middleware('auth:sanctum')->group(function () {
             Route::delete('logout', [AuthController::class, 'logout'])->name('logout');
         });
@@ -43,11 +46,7 @@ Route::prefix('api/')->group(function () {
     //     [ConsultationController::class, 'fetchDoctors']
     // );
 
-    Route::middleware(['auth'])->group(function () {
-        Route::get('articles/fetch', [ArticleController::class, 'fetchArticles']);
-        Route::get('articles/create-data', [ArticleController::class, 'create']);
-        Route::get('articles/{article}/detail', [ArticleController::class, 'show']);
-        Route::get('articles/{article}/edit-data', [ArticleController::class, 'edit'])->middleware('can:update,article');
+    Route::middleware(['auth'])->group(function () {        
         Route::get('consultations/fetch', [ConsultationController::class, 'fetchConsultations']);
         Route::get('consultations/{username}/detail', [ConsultationController::class, 'show']);
         Route::get('/consultations/start/{doctor:username}', [ConsultationController::class, 'start'])
@@ -58,17 +57,14 @@ Route::prefix('api/')->group(function () {
         Route::get('/appointments/fetch', [AppointmentController::class, 'fetchAppointments']);
         Route::get('/doctor/appointments/fetch', [AppointmentController::class, 'fetchDoctorAppointments']);
         Route::get('dashboard/fetch', [HomeController::class, 'fetchDashboardData']);
-        // POST
-        Route::post('articles/store', [ArticleController::class, 'store'])->middleware('can:create,article');
-        Route::post('articles/{article}/update', [ArticleController::class, 'update'])->middleware('can:update,article');
-        Route::post('articles/{article}/destroy', [ArticleController::class, 'destroy'])->middleware('can:delete,article');
+        Route::get('profile/fetch', [ProfileController::class, 'fetch']);
+        // POST        
         Route::post('chat/send', [ChatController::class, 'store']);
         Route::post('chat/{consultation}/close', [ChatController::class, 'close']);
-        Route::get('profile/fetch', [ProfileController::class, 'fetch']);
         Route::post('profile/update', [ProfileController::class, 'update']);
     });
 
-    Route::middleware(['auth', 'can:' . Role::ADMIN->value])->prefix('admin')->group(function () {
+    Route::middleware(['auth', 'can:' . Role::ADMIN->value])->prefix('admin')->group(function () {     
         Route::get('available-tables', [HomeController::class, 'getAvailableTables']);
         Route::get('fetch-table/{tableName}', [HomeController::class, 'fetchAdminTable']);
         Route::get('doctors/fetch', [DoctorController::class, 'fetchDoctors']);
@@ -84,6 +80,9 @@ Route::prefix('api/')->group(function () {
         Route::get('users/{username}/edit-data', [UserController::class, 'edit']);
         Route::get('consultations/fetch-all', [ConsultationController::class, 'fetchAllConsultations']);
         Route::get('consultations/{username}/edit-data', [ConsultationController::class, 'edit']);
+        Route::get('articles/fetch', [ArticleController::class, 'fetchArticles']);
+        Route::get('articles/create-data', [ArticleController::class, 'create']);        
+        Route::get('articles/{article}/edit-data', [ArticleController::class, 'edit'])->middleware('can:update,article');
 
         // POST
         Route::post('doctors/store', [DoctorController::class, 'store']);
@@ -94,11 +93,14 @@ Route::prefix('api/')->group(function () {
         Route::post('users/{username}/update', [UserController::class, 'update']);
         Route::post('consultations/store', [ConsultationController::class, 'store']);
         Route::post('consultations/{username}/update', [ConsultationController::class, 'update']);
+        Route::post('articles/store', [ArticleController::class, 'store']);
+        Route::post('articles/{article}/update', [ArticleController::class, 'update'])->middleware('can:update,article');
         // DELETE        
         Route::post('doctors/{doctor}/destroy', [DoctorController::class, 'destroy'])->name('doctor.deleteData');
         Route::post('members/{username}/destroy', [MemberController::class, 'destroy'])->name('member.deleteData');
         Route::post('users/{username}/destroy', [UserController::class, 'destroy'])->name('user.deleteData');
         Route::post('consultations/{id}/destroy', [ConsultationController::class, 'destroy'])->name('consultation.deleteData');
+        Route::post('articles/{article}/destroy', [ArticleController::class, 'destroy'])->middleware('can:delete,article');
     });
 });
 #endregion
@@ -113,12 +115,11 @@ Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors.index'
 Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
 Route::get('/consultations/{specialty?}', [ConsultationController::class, 'index'])->name('consultation.index');
 Route::view('/articles', 'pages.articles.index');
-
+Route::get('/articles/{article}', function ($article) {
+    return view('pages.articles.show', ['articleId' => $article]);
+});
 
 Route::middleware(['auth'])->group(function () {    
-    Route::get('/articles/{article}', function ($article) {
-        return view('pages.articles.show', ['articleId' => $article]);
-    });
     Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
     Route::post('/consultations', [ConsultationController::class, 'store'])->name('consultation.store');
 
@@ -130,14 +131,7 @@ Route::middleware(['auth'])->group(function () {
     //PORTAL (ADMIN & DOCTOR)
     Route::prefix('portal')->middleware(['can:viewBackend,App\Models\Article'])->group(function () {
 
-        Route::view('/', 'pages.admin.dashboard.index')->name('portal.dashboard');
-
-        Route::prefix('articles')->group(function () {
-            Route::view('/', 'pages.admin.articles.index');
-            Route::view('/create', 'pages.admin.articles.create')->name('articles.create');
-            Route::view('/{article}/show', 'pages.admin.articles.show');
-            Route::view('/{article}/edit', 'pages.admin.articles.edit');
-        });
+        Route::view('/', 'pages.admin.dashboard.index')->name('portal.dashboard');        
 
         Route::prefix('consultations')->group(function () {
             Route::view('/', 'pages.admin.consultations.index');
@@ -172,6 +166,13 @@ Route::middleware(['auth'])->group(function () {
             Route::view('/create', 'pages.admin.members.create');
             Route::view('/{username}/show', 'pages.admin.members.show');
             Route::view('/{username}/edit', 'pages.admin.members.edit');
+        });
+
+        Route::prefix('articles')->group(function () {
+            Route::view('/', 'pages.admin.articles.index');
+            Route::view('/create', 'pages.admin.articles.create')->name('articles.create');
+            Route::view('/{article}/show', 'pages.admin.articles.show');
+            Route::view('/{article}/edit', 'pages.admin.articles.edit');
         });
     });
 

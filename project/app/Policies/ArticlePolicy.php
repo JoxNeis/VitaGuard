@@ -14,7 +14,11 @@ class ArticlePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->role === Role::ADMIN->value || $user->role === Role::DOCTOR->value;
+        if ($user->role === Role::ADMIN->value) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -35,7 +39,7 @@ class ArticlePolicy
      */
     public function create(User $user): bool
     {
-        return $user->role === Role::ADMIN->value || $user->role === Role::DOCTOR->value;
+        return $user->role === Role::ADMIN->value;
     }
 
     /**

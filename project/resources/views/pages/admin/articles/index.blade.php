@@ -70,7 +70,7 @@
                 let tableWrapper = $('#table-wrapper');
 
                 $.ajax({
-                    url: `/api/articles/fetch`,
+                    url: `/api/admin/articles/fetch`,
                     method: 'GET',
                     success: function (response) {
                         if (response.success && response.data.data && response.data.data.length > 0) {
@@ -88,7 +88,7 @@
                                         <td>${creatorName}</td>
                                         <td>${topicName}</td>
                                         <td class="text-center">
-                                            <a href="/portal/articles/${article.id}/show" class="btn btn-sm btn-warning text-white">Detail</a>                                            
+                                            <a href="/admin/articles/${article.id}/show" class="btn btn-sm btn-warning text-white">Detail</a>                                            
                                             <button type="button" class="btn btn-sm btn-danger text-white btn-delete" data-id="${article.id}">
                                                     Delete
                                             </button>                    
@@ -130,7 +130,7 @@
                 btn.html('<span class="spinner-border spinner-border-sm"></span> Menghapus...').prop('disabled', true);
 
                 $.ajax({
-                    url: `/api/articles/${articleToDelete}/destroy`,
+                    url: `/api/admin/articles/${articleToDelete}/destroy`,
                     method: 'POST',
                     data: {
                         '_token': '{{ csrf_token() }}'
